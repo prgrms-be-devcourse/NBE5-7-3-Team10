@@ -65,8 +65,9 @@
 ---
 
 ## 🛠️ 시스템 구성도 / 기술 스택
-<img src="https://github.com/user-attachments/assets/e2ca8490-f5c3-4d2b-abc0-c6899b230d44" alt="logo1" height="500"/>
-<img src="https://github.com/user-attachments/assets/de44d232-bde7-40f2-b9f0-866fb45c05f3" alt="logo2" height="500"/>
+<img src="https://github.com/user-attachments/assets/e85ef17d-c4bf-4a58-ae60-99e3b40bd81f" alt="logo2" height="400"/>
+<img src="https://github.com/user-attachments/assets/c05af4c9-009f-443e-ad01-60b7fbf6c5ee" alt="logo1" height="400"/>
+
 
 ## 🛠️ ERD
 ![erd_collabond](https://github.com/user-attachments/assets/d8b96391-db8b-4c28-b309-abb0e85c8003)
