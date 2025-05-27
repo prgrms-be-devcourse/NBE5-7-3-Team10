@@ -22,6 +22,7 @@ const RecruitmentCreatePage = () => {
     title: "",
     description: "",
     deadline: defaultDeadline,
+    status: "RECRUITING"
   })
 
   useEffect(() => {
