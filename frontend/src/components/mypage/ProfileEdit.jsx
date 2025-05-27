@@ -198,7 +198,7 @@ useEffect(() => {
         status:      formData.status === "true",
         type:        isIP ? "IP" : "STORE",
         // STORE일 때만 addressId 필드로 전달
-        addressId:   !isIP ? formData.addressCode : undefined,
+        addressCode:   !isIP ? formData.addressCode : undefined,
         address:     !isIP ? formData.address : undefined,
       };
 
