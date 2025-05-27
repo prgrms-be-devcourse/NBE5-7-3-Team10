@@ -40,7 +40,7 @@ const RecruitmentEditPage = () => {
           title: recruitment.title,
           description: recruitment.description,
           deadline: new Date(recruitment.deadline).toISOString().split("T")[0],
-          status: "RECRUITING"
+          status: recruitment.status
         })
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -157,6 +157,21 @@ const RecruitmentEditPage = () => {
               min={new Date().toISOString().split("T")[0]}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">상태</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="form-control"
+              required
+            >
+              <option value="RECRUITING">모집중</option>
+              <option value="COMPLETED">매칭완료</option>
+            </select>
           </div>
 
           <div className="form-actions">
