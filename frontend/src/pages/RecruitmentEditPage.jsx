@@ -17,6 +17,8 @@ const RecruitmentEditPage = () => {
     title: "",
     description: "",
     deadline: "",
+    status: "RECRUITING" 
+    
   })
 
   useEffect(() => {
@@ -38,6 +40,7 @@ const RecruitmentEditPage = () => {
           title: recruitment.title,
           description: recruitment.description,
           deadline: new Date(recruitment.deadline).toISOString().split("T")[0],
+          status: recruitment.status
         })
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -65,7 +68,7 @@ const RecruitmentEditPage = () => {
     try {
       setLoading(true)
 
-      await recruitmentAPI.updateRecruitment(id, formData)
+      await recruitmentAPI.updateRecruitment(id,{ ...formData,  deadline: `${formData.deadline}T00:00:00`})
 
       alert("모집 공고가 수정되었습니다.")
       navigate("/mypage/my-recruitments")
@@ -154,6 +157,21 @@ const RecruitmentEditPage = () => {
               min={new Date().toISOString().split("T")[0]}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">상태</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="form-control"
+              required
+            >
+              <option value="RECRUITING">모집중</option>
+              <option value="COMPLETED">매칭완료</option>
+            </select>
           </div>
 
           <div className="form-actions">
