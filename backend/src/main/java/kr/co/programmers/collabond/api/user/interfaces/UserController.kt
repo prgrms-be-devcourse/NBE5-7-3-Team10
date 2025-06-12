@@ -1,5 +1,6 @@
 package kr.co.programmers.collabond.api.user.interfaces
 
+import jakarta.validation.Valid
 import kr.co.programmers.collabond.api.user.application.UserService
 import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
@@ -27,14 +28,14 @@ class UserController(
     @PatchMapping("/signup")
     fun signup(
         @AuthenticationPrincipal userInfo: OAuth2UserInfo,
-        @RequestBody dto: UserSignUpRequestDto
+        @Valid @RequestBody dto: UserSignUpRequestDto
     ): ResponseEntity<UserResponseDto> =
         ResponseEntity.ok(userService.signup(userInfo.username, dto))
 
     @PatchMapping
     fun update(
         @AuthenticationPrincipal userInfo: OAuth2UserInfo,
-        @RequestBody dto: UserUpdateRequestDto
+        @Valid @RequestBody dto: UserUpdateRequestDto
     ): ResponseEntity<UserResponseDto> =
         ResponseEntity.ok(userService.update(userInfo.username, dto))
 

@@ -27,7 +27,7 @@ class UserService(
         }
 
         return user
-            .update(nickname = dto.nickname, role = Role.valueOf(dto.role))
+            .update(nickname = dto.nickname, role = dto.role)
             .let {toResponseDto(it)}
     }
 
@@ -57,8 +57,7 @@ class UserService(
 
     @Transactional(readOnly = true)
     fun findByProviderIdToDto(providerId: String): UserResponseDto =
-        findUserByProviderId(providerId)
-            .let { toResponseDto(it) }
+        toResponseDto(findUserByProviderId(providerId))
 
     @Transactional
     fun findByProviderId(providerId: String): User =
