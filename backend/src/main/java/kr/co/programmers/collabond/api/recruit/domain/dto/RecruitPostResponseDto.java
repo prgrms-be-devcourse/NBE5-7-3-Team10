@@ -1,6 +1,5 @@
 package kr.co.programmers.collabond.api.recruit.domain.dto;
 
-import kr.co.programmers.collabond.api.profile.domain.dto.ProfileSimpleResponseDto;
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPostStatus;
 import lombok.Builder;
 import lombok.Getter;
