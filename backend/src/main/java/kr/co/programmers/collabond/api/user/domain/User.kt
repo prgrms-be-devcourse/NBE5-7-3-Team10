@@ -1,60 +1,35 @@
-package kr.co.programmers.collabond.api.user.domain;
 
-import jakarta.persistence.*;
-import kr.co.programmers.collabond.api.profile.domain.Profile;
-import kr.co.programmers.collabond.shared.domain.UpdatedEntity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+package kr.co.programmers.collabond.api.user.domain
 
-import java.util.List;
+import jakarta.persistence.*
+import kr.co.programmers.collabond.api.profile.domain.Profile
+import kr.co.programmers.collabond.shared.domain.UpdatedEntity
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "users")
-@Getter
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class User extends UpdatedEntity {
+class User(
+    @Column(unique = true)
+    var email: String,
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    var nickname: String,
 
-    @Column(nullable = false)
-    private String nickname;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    var role: Role,
 
-    private String providerId;
+    var providerId: String? = null,
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Profile> profiles;
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    val profiles: MutableList<Profile> = mutableListOf()
+) : UpdatedEntity() {
 
-    @Builder
-    private User(String email, String nickname, Role role, String providerId) {
-        this.email = email;
-        this.nickname = nickname;
-        this.role = role;
-        this.providerId = providerId;
-    }
-
-    public User update(String email, String nickname, Role role) {
-        if (email != null) {
-            this.email = email;
-        }
-
-        if (nickname != null) {
-            this.nickname = nickname;
-        }
-
-        if( role != null ) {
-            this.role = role;
-        }
-
-        return this;
+    fun update(email: String? = null, nickname: String? = null, role: Role? = null): User {
+        email?.let { this.email = it }
+        nickname?.let { this.nickname = it }
+        role?.let { this.role = it }
+        return this
     }
 }
