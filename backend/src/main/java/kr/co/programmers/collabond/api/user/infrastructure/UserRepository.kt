@@ -1,24 +1,24 @@
-package kr.co.programmers.collabond.api.user.infrastructure;
 
-import kr.co.programmers.collabond.api.user.domain.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+package kr.co.programmers.collabond.api.user.infrastructure
 
-import java.util.Optional;
+import kr.co.programmers.collabond.api.user.domain.User
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    @Query(value = """
+interface UserRepository : JpaRepository<User, Long> {
+    @Query(
+        value = """
             SELECT * 
             FROM users 
             WHERE email = :email AND deleted_at is not null
             """,
-            nativeQuery = true)
-    Optional<User> findByEmailAndDeletedAtIsNotNull(String email);
+        nativeQuery = true
+    )
+    fun findByEmailAndDeletedAtIsNotNull(email: String): User?
 
-    Optional<User> findByEmail(String email);
+    fun findByEmail(email: String): User?
 
-    Optional<User> findByProviderId(String providerId);
+    fun findByProviderId(providerId: String): User?
 
-    void deleteByEmail(String email);
-
+    fun deleteByEmail(email: String)
 }
