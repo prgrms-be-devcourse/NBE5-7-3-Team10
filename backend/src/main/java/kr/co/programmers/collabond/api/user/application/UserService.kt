@@ -1,99 +1,83 @@
-package kr.co.programmers.collabond.api.user.application;
 
-import kr.co.programmers.collabond.api.profile.domain.Profile;
-import kr.co.programmers.collabond.api.profile.infrastructure.ProfileRepository;
-import kr.co.programmers.collabond.api.user.domain.Role;
-import kr.co.programmers.collabond.api.user.domain.User;
-import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
-import kr.co.programmers.collabond.api.user.domain.dto.UserSignUpRequestDto;
-import kr.co.programmers.collabond.api.user.domain.dto.UserUpdateRequestDto;
-import kr.co.programmers.collabond.api.user.infrastructure.UserRepository;
-import kr.co.programmers.collabond.api.user.interfaces.UserMapper;
-import kr.co.programmers.collabond.shared.exception.ErrorCode;
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException;
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package kr.co.programmers.collabond.api.user.application
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import kr.co.programmers.collabond.api.user.domain.Role
+import kr.co.programmers.collabond.api.user.domain.User
+import kr.co.programmers.collabond.api.user.domain.UserResponseDto
+import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
+import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
+import kr.co.programmers.collabond.api.user.infrastructure.UserRepository
+import kr.co.programmers.collabond.api.user.interfaces.toResponseDto
+import kr.co.programmers.collabond.shared.exception.ErrorCode
+import kr.co.programmers.collabond.shared.exception.custom.InvalidException
+import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
-public class UserService {
-
-    private final UserRepository userRepository;
-
-
+class UserService(
+    private val userRepository: UserRepository
+) {
     @Transactional
-    public UserResponseDto signup(String providerId, UserSignUpRequestDto dto) {
-        User user = userRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    fun signup(providerId: String, dto: UserSignUpRequestDto): UserResponseDto {
+        val user = userRepository.findByProviderId(providerId)
+            ?: throw NotFoundException(ErrorCode.USER_NOT_FOUND)
 
-        if(user.getRole() != Role.ROLE_TMP) {
-            throw new InvalidException(ErrorCode.INVALID_SIGNUP_REQUEST);
+        if (user.role != Role.ROLE_TMP) {
+            throw InvalidException(ErrorCode.INVALID_SIGNUP_REQUEST)
         }
 
-        user.update(null, dto.nickname(), Role.valueOf(dto.role()));
-        return UserMapper.toResponseDto(user);
+        return user
+            .update(nickname = dto.nickname, role = Role.valueOf(dto.role))
+            .let {toResponseDto(it)}
     }
 
     @Transactional
-    public UserResponseDto update(String providerId, UserUpdateRequestDto dto) {
-        User user = userRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        user.update(null, dto.nickname(), null);
-        return UserMapper.toResponseDto(user);
-    }
+    fun update(providerId: String, dto: UserUpdateRequestDto): UserResponseDto =
+        findUserByProviderId(providerId)
+            .update(nickname = dto.nickname)
+            .let {toResponseDto(it)}
 
     @Transactional
-    public void delete(String providerId) {
-        User user = userRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        userRepository.delete(user);
+    fun delete(providerId: String) {
+        findUserByProviderId(providerId)
+            .let(userRepository::delete)
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDto findById(Long userId) {
-        return userRepository.findById(userId).map(UserMapper::toResponseDto)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
+    fun findById(userId: Long): UserResponseDto =
+        userRepository.findById(userId)
+            .orElseThrow { NotFoundException(ErrorCode.USER_NOT_FOUND) }
+            .let { toResponseDto(it) }
 
     @Transactional(readOnly = true)
-    public UserResponseDto findByEmail(String email) {
-        return userRepository.findByEmail(email).map(UserMapper::toResponseDto)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
+    fun findByEmail(email: String): UserResponseDto =
+        userRepository.findByEmail(email)
+            ?.let { toResponseDto(it) }
+            ?: throw NotFoundException(ErrorCode.USER_NOT_FOUND)
 
     @Transactional(readOnly = true)
-    public UserResponseDto findByProviderIdToDto(String providerId) {
-        return userRepository.findByProviderId(providerId).map(UserMapper::toResponseDto)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
+    fun findByProviderIdToDto(providerId: String): UserResponseDto =
+        findUserByProviderId(providerId)
+            .let { toResponseDto(it) }
 
     @Transactional
-    public User findByProviderId(String providerId) {
-        return userRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
-
+    fun findByProviderId(providerId: String): User =
+        findUserByProviderId(providerId)
 
     @Transactional(readOnly = true)
-    public List<UserResponseDto> findAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserMapper::toResponseDto)
-                .collect(Collectors.toList());
-    }
+    fun findAllUsers(): List<UserResponseDto> =
+        userRepository.findAll()
+            .map { toResponseDto(it) }
 
     @Transactional
-    public void deleteById(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-        userRepository.delete(user);
+    fun deleteById(userId: Long) {
+        userRepository.findById(userId)
+            .orElseThrow { NotFoundException(ErrorCode.USER_NOT_FOUND) }
+            .let(userRepository::delete)
     }
 
+    private fun findUserByProviderId(providerId: String): User =
+        userRepository.findByProviderId(providerId)
+            ?: throw NotFoundException(ErrorCode.USER_NOT_FOUND)
 }
