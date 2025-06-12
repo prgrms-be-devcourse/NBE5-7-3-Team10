@@ -1,4 +1,3 @@
-
 package kr.co.programmers.collabond.api.user.infrastructure
 
 import kr.co.programmers.collabond.api.user.domain.User

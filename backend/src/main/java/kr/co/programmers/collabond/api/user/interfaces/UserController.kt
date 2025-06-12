@@ -1,9 +1,9 @@
 package kr.co.programmers.collabond.api.user.interfaces
 
 import kr.co.programmers.collabond.api.user.application.UserService
-import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
 import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
+import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserInfo
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal

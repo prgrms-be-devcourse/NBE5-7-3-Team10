@@ -1,4 +1,3 @@
-
 package kr.co.programmers.collabond.api.user.application
 
 import kr.co.programmers.collabond.api.user.domain.Role

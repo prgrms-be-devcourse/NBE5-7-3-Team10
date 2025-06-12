@@ -1,4 +1,3 @@
-
 package kr.co.programmers.collabond.api.user.domain
 
 import jakarta.persistence.*
