@@ -1,30 +1,13 @@
-package kr.co.programmers.collabond.api.user.interfaces;
+package kr.co.programmers.collabond.api.user.interfaces
 
-import kr.co.programmers.collabond.api.user.domain.User;
-import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
+import kr.co.programmers.collabond.api.user.domain.User
+import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 
-public class UserMapper {
-
-    public static UserResponseDto toDto(User user) {
-        return UserResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .role(user.getRole().name())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
-    }
-
-    public static UserResponseDto toResponseDto(User user) {
-        return UserResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .role(user.getRole().name())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
-    }
-
-}
+fun toResponseDto(user: User) = UserResponseDto(
+    id = user.id,
+    email = user.email,
+    nickname = user.nickname,
+    role = user.role.name,
+    createdAt = user.createdAt,
+    updatedAt = user.updatedAt
+)
