@@ -3,8 +3,8 @@ package kr.co.programmers.collabond.api.recruit.application
 import kr.co.programmers.collabond.api.profile.application.ProfileService
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPost
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPostStatus
-import kr.co.programmers.collabond.api.recruit.domain.dto.RecruitPostRequestDto
-import kr.co.programmers.collabond.api.recruit.domain.dto.RecruitPostResponseDto
+import kr.co.programmers.collabond.api.recruit.domain.dto.Requests
+import kr.co.programmers.collabond.api.recruit.domain.dto.Responses
 import kr.co.programmers.collabond.api.recruit.infrastructure.RecruitPostRepository
 import kr.co.programmers.collabond.api.recruit.interfaces.RecruitPostMapper
 import kr.co.programmers.collabond.api.user.application.UserService
@@ -28,9 +28,9 @@ class RecruitPostService(
 
     @Transactional
     fun createRecruitPost(
-        request: RecruitPostRequestDto,
+        request: Requests,
         userInfo: OAuth2UserInfo
-    ): RecruitPostResponseDto {
+    ): Responses {
         val profile = profileService.findByProfileId(request.profileId)
         val loginUser = userService.findByProviderId(userInfo.username)
 
@@ -45,9 +45,9 @@ class RecruitPostService(
     @Transactional
     fun updateRecruitPost(
         recruitmentId: Long,
-        request: RecruitPostRequestDto,
+        request: Requests,
         userInfo: OAuth2UserInfo
-    ): RecruitPostResponseDto {
+    ): Responses {
         val post = findRecruitPostById(recruitmentId)
 
         // 소프트 삭제된 게시글은 수정할 수 없습니다.
@@ -81,7 +81,7 @@ class RecruitPostService(
         status: RecruitPostStatus? = null,
         sort: String? = null,
         pageable: Pageable
-    ): Page<RecruitPostResponseDto> {
+    ): Page<Responses> {
         val posts = status?.let { recruitPostRepository.findByStatus(it, pageable) }
             ?: recruitPostRepository.findAll(pageable)
 
@@ -91,14 +91,14 @@ class RecruitPostService(
     }
 
     @Transactional(readOnly = true)
-    fun getRecruitPostsByUser(userId: Long, pageable: Pageable): Page<RecruitPostResponseDto> =
+    fun getRecruitPostsByUser(userId: Long, pageable: Pageable): Page<Responses> =
         recruitPostRepository.findByUserId(userId, pageable)
             .map { recruitPost ->
                 RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
             }
 
     @Transactional(readOnly = true)
-    fun getRecruitPostByProfile(profileId: Long, pageable: Pageable): Page<RecruitPostResponseDto> =
+    fun getRecruitPostByProfile(profileId: Long, pageable: Pageable): Page<Responses> =
         recruitPostRepository.findByProfileId(profileId, pageable)
             .map { recruitPost ->
                 RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
@@ -108,7 +108,7 @@ class RecruitPostService(
     fun findByRecruitmentId(recruitmentId: Long): RecruitPost = findRecruitPostById(recruitmentId)
 
     @Transactional(readOnly = true)
-    fun getRecruitPostById(recruitmentId: Long): RecruitPostResponseDto {
+    fun getRecruitPostById(recruitmentId: Long): Responses {
         val recruitPost = findRecruitPostById(recruitmentId)
         return RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
     }

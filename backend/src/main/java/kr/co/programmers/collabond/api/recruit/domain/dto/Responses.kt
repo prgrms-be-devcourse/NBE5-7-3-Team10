@@ -4,7 +4,7 @@ import kr.co.programmers.collabond.api.profile.domain.dto.ProfileSimpleResponseD
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPostStatus
 import java.time.LocalDateTime
 
-data class RecruitPostResponseDto(
+data class Responses(
     val id: Long,
     val title: String,
     val description: String,
@@ -15,4 +15,14 @@ data class RecruitPostResponseDto(
     val profile: ProfileSimpleResponseDto,
     val createdAt: LocalDateTime,
     val deletedAt: LocalDateTime? = null
+)
+
+data class RecruitPostDto(
+    val id: Long,
+    val title: String,
+    val description: String,
+    val status: String,
+    val deadline: LocalDateTime,
+    val writerProfileId: Long,
+    val writerProfileName: String
 )

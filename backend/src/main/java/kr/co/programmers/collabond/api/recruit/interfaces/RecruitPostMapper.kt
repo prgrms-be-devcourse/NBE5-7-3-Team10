@@ -5,8 +5,8 @@ import kr.co.programmers.collabond.api.profile.interfaces.ProfileMapper
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPost
 import kr.co.programmers.collabond.api.recruit.domain.RecruitPostStatus
 import kr.co.programmers.collabond.api.recruit.domain.dto.RecruitPostDto
-import kr.co.programmers.collabond.api.recruit.domain.dto.RecruitPostRequestDto
-import kr.co.programmers.collabond.api.recruit.domain.dto.RecruitPostResponseDto
+import kr.co.programmers.collabond.api.recruit.domain.dto.Requests
+import kr.co.programmers.collabond.api.recruit.domain.dto.Responses
 
 object RecruitPostMapper {
 
@@ -20,8 +20,8 @@ object RecruitPostMapper {
         writerProfileName = entity.profile?.name!!
     )
 
-    fun toResponseDto(entity: RecruitPost, fullPath: String): RecruitPostResponseDto =
-        RecruitPostResponseDto(
+    fun toResponseDto(entity: RecruitPost, fullPath: String): Responses =
+        Responses(
             id = entity.id!!,
             title = entity.title,
             description = entity.description,
@@ -34,7 +34,7 @@ object RecruitPostMapper {
             deletedAt = entity.deletedAt
         )
 
-    fun toEntity(dto: RecruitPostRequestDto, profile: Profile): RecruitPost = RecruitPost(
+    fun toEntity(dto: Requests, profile: Profile): RecruitPost = RecruitPost(
         profile = profile,
         title = dto.title,
         description = dto.description,

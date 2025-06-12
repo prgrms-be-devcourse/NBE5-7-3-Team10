@@ -3,7 +3,7 @@ package kr.co.programmers.collabond.api.recruit.domain.dto
 import jakarta.validation.constraints.*
 import java.time.LocalDateTime
 
-data class RecruitPostRequestDto(
+data class Requests(
     @field:NotNull(message = "프로필 ID는 필수입니다")
     @field:Positive(message = "프로필 ID는 양수여야 합니다")
     val profileId: Long,
