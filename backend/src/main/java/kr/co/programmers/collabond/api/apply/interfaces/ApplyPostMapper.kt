@@ -38,7 +38,7 @@ object ApplyPostMapper {
                         null
                     else
                         entity.attachments!!
-                            .map { attachment: Attachment? ->
+                            .map { attachment: Attachment ->
                                 AttachmentMapper.toDto(
                                     attachment
                                 )
