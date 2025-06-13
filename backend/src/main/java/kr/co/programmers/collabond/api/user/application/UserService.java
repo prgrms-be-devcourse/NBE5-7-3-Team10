@@ -1,7 +1,5 @@
 package kr.co.programmers.collabond.api.user.application;
 
-import kr.co.programmers.collabond.api.profile.domain.Profile;
-import kr.co.programmers.collabond.api.profile.infrastructure.ProfileRepository;
 import kr.co.programmers.collabond.api.user.domain.Role;
 import kr.co.programmers.collabond.api.user.domain.User;
 import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
@@ -10,8 +8,8 @@ import kr.co.programmers.collabond.api.user.domain.dto.UserUpdateRequestDto;
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository;
 import kr.co.programmers.collabond.api.user.interfaces.UserMapper;
 import kr.co.programmers.collabond.shared.exception.ErrorCode;
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException;
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException;
+import kr.co.programmers.collabond.shared.exception.InvalidException;
+import kr.co.programmers.collabond.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

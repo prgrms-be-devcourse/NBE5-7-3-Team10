@@ -6,7 +6,7 @@ import kr.co.programmers.collabond.api.user.domain.User;
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository;
 import kr.co.programmers.collabond.shared.exception.ErrorCode;
 import kr.co.programmers.collabond.shared.exception.custom.DuplicatedException;
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException;
+import kr.co.programmers.collabond.shared.exception.InvalidException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

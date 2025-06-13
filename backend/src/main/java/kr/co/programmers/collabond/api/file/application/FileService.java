@@ -4,7 +4,7 @@ import kr.co.programmers.collabond.api.file.domain.File;
 import kr.co.programmers.collabond.api.file.infrastructure.FileRepository;
 import kr.co.programmers.collabond.api.file.interfaces.FileMapper;
 import kr.co.programmers.collabond.shared.exception.ErrorCode;
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException;
+import kr.co.programmers.collabond.shared.exception.InvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
