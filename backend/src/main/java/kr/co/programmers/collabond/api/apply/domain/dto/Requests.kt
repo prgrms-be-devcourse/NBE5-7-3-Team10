@@ -10,3 +10,15 @@ class ApplyPostRequestDto(
     val content: String
 ) {
 }
+
+class ReceivedApplyPostsRequestDto(
+    val status: String? = null,
+    val sort: String? = null
+) {
+}
+
+class SentApplyPostsRequestDto(
+    val status: String? = null,
+    val sort: String? = null
+) {
+}
