@@ -18,14 +18,14 @@ abstract class UpdatedEntity {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     @NotNull
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    val updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null
 
     @Column(name = "deleted_at")
-    val deletedAt: LocalDateTime? = null
+    var deletedAt: LocalDateTime? = null
 
     val isDeleted: Boolean
         get() = deletedAt != null

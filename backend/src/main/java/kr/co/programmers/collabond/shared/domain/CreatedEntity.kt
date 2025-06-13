@@ -17,10 +17,10 @@ abstract class CreatedEntity {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     @NotNull
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "deleted_at")
-    val deletedAt: LocalDateTime? = null
+    var deletedAt: LocalDateTime? = null
 
     val isDeleted: Boolean
         get() = deletedAt != null

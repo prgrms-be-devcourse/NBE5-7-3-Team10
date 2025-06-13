@@ -18,9 +18,9 @@ abstract class OnlyUpdatedEntity {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     @NotNull
-    val createdAt: LocalDateTime = LocalDateTime.now()
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    val updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null
 }
