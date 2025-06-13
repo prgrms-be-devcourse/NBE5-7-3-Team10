@@ -1,5 +1,6 @@
 package kr.co.programmers.collabond.api.apply.application
 
+import jakarta.validation.Valid
 import kr.co.programmers.collabond.api.apply.domain.ApplyPost
 import kr.co.programmers.collabond.api.apply.domain.ApplyPostStatus
 import kr.co.programmers.collabond.api.apply.domain.dto.ApplyPostDto
@@ -41,7 +42,7 @@ class ApplyPostService(
     @Transactional
     fun applyPost(
         recruitmentId: Long,
-        request: ApplyPostRequestDto,
+        @Valid request: ApplyPostRequestDto,
         files: List<MultipartFile>?
     ): ApplyPostDto {
 
