@@ -26,6 +26,7 @@ public enum ErrorCode {
     EXPIRED_TOKEN(401, "만료된 토큰입니다"),
 
     FORBIDDEN_REQUEST(403, "요청을 수행할 권한이 없습니다"),
+    INVALID_SIGNATURE(403, "유효하지 않은 시그니처입니다"),
 
     NOT_FOUND(404, "요청에 대한 데이터를 찾을 수 없습니다"),
     RECRUIT_NOT_FOUND(404, "모집 공고글을 찾을 수 없습니다"),
@@ -43,8 +44,8 @@ public enum ErrorCode {
     SAVE_IMAGE_ERROR(500, "이미지 저장 실패"),
     ;
 
-    private final int status;
-    private final String message;
+    public final int status;
+    public final String message;
 
     // status값으로 HttpStatus를 반환하는 메서드
     public HttpStatus getStatus() {
