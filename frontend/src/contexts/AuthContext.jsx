@@ -3,6 +3,7 @@
 // src/context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
 import { clearTokens, setTokens, isSignedUp, getUserInfo, isSignedIn } from '../utils/storage';
+import { tokenAPI } from '../api'
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     clearTokens();
+    tokenAPI.logout();
     window.location.href = '/login';
   };
 

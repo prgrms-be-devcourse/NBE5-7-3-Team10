@@ -14,8 +14,8 @@ import {
 
 const BASE_URL = "http://localhost:8080";
 
-const consumerKey = "963958cd0e98427cbe84";
-const consumerSecret = "ddbd3f5bf9d0492583cf";
+const consumerKey = "f7ddf21748374d63a9f7";
+const consumerSecret = "9111abed50bb40c9bba3";
 
 // 브라우저 환경인지 확인
 const isBrowser = typeof window !== "undefined";
@@ -103,6 +103,11 @@ apiClient.interceptors.response.use(
   }
 );
 
+// Token API
+export const tokenAPI = {
+  logout: (refreshToken) => api.post("/api/tokens/logout", refreshToken),
+};
+
 // User API
 export const userAPI = {
   signup: (userData) => api.patch("/api/users/signup", userData),
@@ -118,7 +123,7 @@ export const profileAPI = {
   createProfile: (data) => api.post("/api/profiles", data),
   getProfile: (profileId) => api.get(`/api/profiles/${profileId}`),
   updateProfile: (profileId, data) =>
-  api.patch(`/api/profiles/${profileId}`, data),
+    api.patch(`/api/profiles/${profileId}`, data),
   deleteProfile: (profileId) => api.delete(`/api/profiles/${profileId}`),
   getIPProfiles: (params) => api.get("/api/profiles/ip", { params }),
   getStoreProfiles: (params) => api.get("/api/profiles/store", { params }),
