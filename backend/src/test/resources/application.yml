@@ -8,6 +8,9 @@ spring:
   application:
     name: collabond
 
+  sql:
+    init:
+      mode: never
 
   mail:
     host: smtp.gmail.com
@@ -34,7 +37,7 @@ spring:
         show_sql: true
         format_sql: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
 
 logging:
   level:
