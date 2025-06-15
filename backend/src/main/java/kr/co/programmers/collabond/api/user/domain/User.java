@@ -18,7 +18,6 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User extends UpdatedEntity {
 
     @Column(nullable = false, unique = true)

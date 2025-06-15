@@ -48,7 +48,7 @@ class ProfileRepositoryTest {
     void findAllByUserId() {
 
         //given
-        User user1 = createUser("user1@test.com", "yewon", Role.TMP, "1234");
+        User user1 = createUser("user1@test.com", "yewon", Role.ROLE_TMP, "1234");
 
         Profile p1 = Profile.builder()
                 .user(user1)
@@ -89,7 +89,7 @@ class ProfileRepositoryTest {
     @DisplayName("userId로 Profile 개수 조회")
     void countByUserId() {
         //given
-        User user1 = createUser("user1@test.com", "yewon", Role.TMP, "1234");
+        User user1 = createUser("user1@test.com", "yewon", Role.ROLE_TMP, "1234");
 
         Profile p1 = Profile.builder()
                 .user(user1)
