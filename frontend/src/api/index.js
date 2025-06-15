@@ -53,9 +53,8 @@ if (isBrowser) {
         const { data } = await axios.post(`${BASE_URL}/api/tokens/refresh`, {
           refreshToken,
         });
-        setAccessToken({
-          accessToken: data.accessToken,
-        });
+        setAccessToken(data.accessToken);
+
         // 교체된 토큰으로 원 요청 재시도
         original.headers.Authorization = `Bearer ${data.accessToken}`;
         return api(original);

@@ -2,7 +2,7 @@
 
 // src/context/AuthContext.js
 import { createContext, useState, useEffect } from 'react';
-import { clearTokens, setTokens, isSignedUp, getUserInfo, isSignedIn } from '../utils/storage';
+import { clearTokens, setTokens, isSignedUp, getUserInfo, isSignedIn, getRefreshToken } from '../utils/storage';
 import { tokenAPI } from '../api'
 
 export const AuthContext = createContext();
@@ -19,9 +19,11 @@ export const AuthProvider = ({ children }) => {
     window.location.href = '/';
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const refreshToken = getRefreshToken();
+    console.log(refreshToken);
+    await tokenAPI.logout(refreshToken);
     clearTokens();
-    tokenAPI.logout();
     window.location.href = '/login';
   };
 
