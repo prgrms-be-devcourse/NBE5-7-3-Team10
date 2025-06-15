@@ -3,7 +3,6 @@ package kr.co.programmers.collabond.api.user.domain;
 import jakarta.persistence.*;
 import kr.co.programmers.collabond.api.profile.domain.Profile;
 import kr.co.programmers.collabond.shared.domain.UpdatedEntity;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
