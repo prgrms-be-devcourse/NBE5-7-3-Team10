@@ -97,7 +97,7 @@ export const setGovAccessToken = (govAccessToken) => {
   localStorage.setItem(TOKEN_KEY.GOVACCESS, govAccessToken);
 };
 
-export const setAccessToken = ({ accessToken }) => {
+export const setAccessToken = (accessToken) => {
   localStorage.setItem(TOKEN_KEY.ACCESS, accessToken);
 };
 
@@ -108,7 +108,6 @@ export const setNickname = (nickname) => {
 export const setRole = (role) => {
   localStorage.setItem(TOKEN_KEY.ROLE, role);
 };
-
 
 export const clearTokens = () => {
   localStorage.removeItem(TOKEN_KEY.ACCESS);
