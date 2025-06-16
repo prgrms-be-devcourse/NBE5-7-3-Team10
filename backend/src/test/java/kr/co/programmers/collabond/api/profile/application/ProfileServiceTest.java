@@ -1,6 +1,5 @@
 package kr.co.programmers.collabond.api.profile.application;
 
-import jakarta.persistence.EntityManager;
 import kr.co.programmers.collabond.api.file.application.FileService;
 import kr.co.programmers.collabond.api.file.domain.File;
 import kr.co.programmers.collabond.api.image.application.ImageService;
@@ -16,27 +15,29 @@ import kr.co.programmers.collabond.api.user.application.UserService;
 import kr.co.programmers.collabond.api.user.domain.Role;
 import kr.co.programmers.collabond.api.user.domain.User;
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserInfo;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@MockitoSettings(strictness = Strictness.LENIENT)
 class ProfileServiceTest {
 
 
@@ -65,8 +66,8 @@ class ProfileServiceTest {
 //    }
 
 
-
     @Test
+    @DisplayName("프로필 생성 시 파일 저장 호출 및 태그 바인딩 검증")
     void create_success() {
         // given
         ProfileRequestDto dto = ProfileRequestDto.builder()
@@ -76,7 +77,7 @@ class ProfileServiceTest {
                 .tagIds(List.of(1L))
                 .build();
 
-        MultipartFile profileImage   = mock(MultipartFile.class);
+        MultipartFile profileImage = mock(MultipartFile.class);
         MultipartFile thumbnailImage = mock(MultipartFile.class);
         List<MultipartFile> extraImages = Collections.emptyList();
 
@@ -95,7 +96,6 @@ class ProfileServiceTest {
         File mockFile = mock(File.class);
         when(fileService.saveFile(profileImage)).thenReturn(mockFile);
         when(fileService.saveFile(thumbnailImage)).thenReturn(mockFile);
-
 
 
         Profile savedProfile = mock(Profile.class);
@@ -131,65 +131,65 @@ class ProfileServiceTest {
     }
 
 
-
-@Test
-void findById_presentAndEmpty() {
-    // given
-    long existingId = 1L;
-    long missingId  = 2L;
-
-
-    Profile profile = mock(Profile.class);
-    when(profile.getId()).thenReturn(existingId);
-    when(profile.getType()).thenReturn(ProfileType.IP);
-    when(profile.getName()).thenReturn("TestName");
-    when(profile.getDescription()).thenReturn("TestDesc");
-    when(profile.getAddress()).thenReturn("TestAddr");
-    when(profile.getAddressCode()).thenReturn("Code123");
-    when(profile.getCollaboCount()).thenReturn(0);
-    when(profile.getTags()).thenReturn(Collections.emptyList());
-    when(profile.getCreatedAt()).thenReturn(LocalDateTime.now());
-    when(profile.getUpdatedAt()).thenReturn(LocalDateTime.now());
+    @Test
+    @DisplayName("ID로 프로필 조회 존재하는 ID는 Optional에 없는 ID는 비어있음")
+    void findById_presentAndEmpty() {
+        // given
+        long existingId = 1L;
+        long missingId = 2L;
 
 
-    User user = mock(User.class);
-    when(user.getId()).thenReturn(10L);
+        Profile profile = mock(Profile.class);
+        when(profile.getId()).thenReturn(existingId);
+        when(profile.getType()).thenReturn(ProfileType.IP);
+        when(profile.getName()).thenReturn("TestName");
+        when(profile.getDescription()).thenReturn("TestDesc");
+        when(profile.getAddress()).thenReturn("TestAddr");
+        when(profile.getAddressCode()).thenReturn("Code123");
+        when(profile.getCollaboCount()).thenReturn(0);
+        when(profile.getTags()).thenReturn(Collections.emptyList());
+        when(profile.getCreatedAt()).thenReturn(LocalDateTime.now());
+        when(profile.getUpdatedAt()).thenReturn(LocalDateTime.now());
+
+
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(10L);
 //    when(user.getNickname()).thenReturn("nick");
-    when(profile.getUser()).thenReturn(user);
+        when(profile.getUser()).thenReturn(user);
 
 
+        when(profileRepository.findById(existingId))
+                .thenReturn(Optional.of(profile));
+        when(profileRepository.findById(missingId))
+                .thenReturn(Optional.empty());
 
-    when(profileRepository.findById(existingId))
-            .thenReturn(Optional.of(profile));
-    when(profileRepository.findById(missingId))
-            .thenReturn(Optional.empty());
 
+        File mockFile = mock(File.class);
+        when(mockFile.getSavedName()).thenReturn("file_saved.png");
 
-    File mockFile = mock(File.class);
-    when(mockFile.getSavedName()).thenReturn("file_saved.png");
+        Image profileImg = mock(Image.class);
+        when(profileImg.getType()).thenReturn("PROFILE");
+        when(profileImg.getFile()).thenReturn(mockFile);
 
-    Image profileImg = mock(Image.class);
-    when(profileImg.getType()).thenReturn("PROFILE");
-    when(profileImg.getFile()).thenReturn(mockFile);
+        Image thumbnailImg = mock(Image.class);
+        when(thumbnailImg.getType()).thenReturn("THUMBNAIL");
+        when(thumbnailImg.getFile()).thenReturn(mockFile);
+        when(profile.getImages())
+                .thenReturn(List.of(profileImg, thumbnailImg));
 
-    Image thumbnailImg = mock(Image.class);
-    when(thumbnailImg.getType()).thenReturn("THUMBNAIL");
-    when(thumbnailImg.getFile()).thenReturn(mockFile);
-    when(profile.getImages())
-            .thenReturn(List.of(profileImg, thumbnailImg));
+        // when / then
+        Optional<ProfileResponseDto> opt = profileService.findById(existingId);
+        assertTrue(opt.isPresent(),
+                "기대: 프로필이 존재하여 Optional이 비어있지 않아야 합니다");
 
-    // when / then
-    Optional<ProfileResponseDto> opt = profileService.findById(existingId);
-    assertTrue(opt.isPresent(),
-            "기대: 프로필이 존재하여 Optional이 비어있지 않아야 합니다");
-
-    Optional<ProfileResponseDto> opt2 = profileService.findById(missingId);
-    assertTrue(opt2.isEmpty(),
-            "기대: 없는 ID 이므로 Optional이 비어있어야 합니다");
-}
+        Optional<ProfileResponseDto> opt2 = profileService.findById(missingId);
+        assertTrue(opt2.isEmpty(),
+                "기대: 없는 ID 이므로 Optional이 비어있어야 합니다");
+    }
 
 
     @Test
+    @DisplayName("프로필 검색 ")
     void searchProfiles_returnsPage() {
         // given
         PageRequest pageable = PageRequest.of(0, 1);
