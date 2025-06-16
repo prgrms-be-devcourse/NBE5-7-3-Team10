@@ -1,6 +1,8 @@
 package kr.co.programmers.collabond.api.user.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import kr.co.programmers.collabond.api.profile.domain.Profile;
 import kr.co.programmers.collabond.shared.domain.UpdatedEntity;
 import lombok.Builder;
@@ -19,10 +21,14 @@ import java.util.List;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class User extends UpdatedEntity {
 
+    @NotNull
+    @Size(max = 255)
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
+    @NotNull
+    @Size(max = 20)
     private String nickname;
 
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package kr.co.programmers.collabond.core.config;
 
+import kr.co.programmers.collabond.core.auth.CustomAuthenticationEntryPoint;
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2SuccessHandler;
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserService;
 import kr.co.programmers.collabond.core.auth.jwt.TokenAuthenticationFilter;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +30,7 @@ public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomAuthenticationEntryPoint entryPoint;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     @Bean
@@ -61,13 +64,20 @@ public class SecurityConfig {
                 // 임시로 Admin만 권한 검사
                 .authorizeHttpRequests(
                         auth -> auth
-                                .anyRequest().permitAll()
-//                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                                .requestMatchers("/", "/login/**", "/oauth2/**", "/test", "/refresh").permitAll()
-//                                .requestMatchers("/test2").hasRole("TMP")
-//                                .requestMatchers("/admin/**").hasRole("ADMIN")
-//                                .anyRequest().authenticated()
+                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PATCH,"/api/users/signup").hasRole("TMP")
+                                .requestMatchers(HttpMethod.GET, "/api/users/{userId}",
+                                    "/api/profiles/**",
+                                    "/api/recruitments/**",
+                                    "/api/tags/**").permitAll()
+                                .requestMatchers("/",
+                                        "/error",
+                                        "/oauth2/**",
+                                        "/api/tokens/refresh").permitAll()
+                                .anyRequest().authenticated()
                 )
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
                 .build();

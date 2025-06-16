@@ -1,14 +1,14 @@
 package kr.co.programmers.collabond.api.user.application;
 
-import kr.co.programmers.collabond.api.profile.domain.Profile;
-import kr.co.programmers.collabond.api.profile.infrastructure.ProfileRepository;
 import kr.co.programmers.collabond.api.user.domain.Role;
 import kr.co.programmers.collabond.api.user.domain.User;
+import kr.co.programmers.collabond.api.user.domain.dto.SignUpResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserSignUpRequestDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserUpdateRequestDto;
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository;
 import kr.co.programmers.collabond.api.user.interfaces.UserMapper;
+import kr.co.programmers.collabond.core.auth.jwt.TokenService;
 import kr.co.programmers.collabond.shared.exception.ErrorCode;
 import kr.co.programmers.collabond.shared.exception.custom.InvalidException;
 import kr.co.programmers.collabond.shared.exception.custom.NotFoundException;
@@ -19,16 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final TokenService tokenService;
 
     @Transactional
-    public UserResponseDto signup(String providerId, UserSignUpRequestDto dto) {
+    public SignUpResponseDto signup(String providerId, UserSignUpRequestDto dto) {
         User user = userRepository.findByProviderId(providerId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -36,8 +35,10 @@ public class UserService {
             throw new InvalidException(ErrorCode.INVALID_SIGNUP_REQUEST);
         }
 
-        user.update(null, dto.nickname(), Role.valueOf(dto.role()));
-        return UserMapper.toResponseDto(user);
+        user.update(null, dto.nickname(), dto.role());
+
+        String reissuedAccessToken = tokenService.createAccessToken(providerId, dto.role());
+        return UserMapper.toSignUpResponseDto(user, reissuedAccessToken);
     }
 
     @Transactional

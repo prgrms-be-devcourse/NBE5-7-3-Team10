@@ -1,3 +1,7 @@
 package kr.co.programmers.collabond.core.auth.jwt;
 
-public record RefreshTokenRequestDto(String refreshToken) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record RefreshTokenRequestDto(
+        @NotBlank
+        String refreshToken) {}

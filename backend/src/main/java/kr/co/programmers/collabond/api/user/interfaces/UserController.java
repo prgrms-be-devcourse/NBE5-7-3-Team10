@@ -1,6 +1,8 @@
 package kr.co.programmers.collabond.api.user.interfaces;
 
+import jakarta.validation.Valid;
 import kr.co.programmers.collabond.api.user.application.UserService;
+import kr.co.programmers.collabond.api.user.domain.dto.SignUpResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserUpdateRequestDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserSignUpRequestDto;
@@ -17,7 +19,6 @@ public class UserController {
 
     private final UserService userService;
 
-
     @GetMapping
     public ResponseEntity<UserResponseDto> getMyUserInfo(@AuthenticationPrincipal OAuth2UserInfo userInfo) {
         return ResponseEntity.ok(userService.findByProviderIdToDto(userInfo.getUsername()));
@@ -29,14 +30,14 @@ public class UserController {
     }
 
     @PatchMapping("/signup")
-    public ResponseEntity<UserResponseDto> signup(@AuthenticationPrincipal OAuth2UserInfo userInfo,
-                                       @RequestBody UserSignUpRequestDto dto) {
+    public ResponseEntity<SignUpResponseDto> signup(@AuthenticationPrincipal OAuth2UserInfo userInfo,
+                                                    @Valid @RequestBody UserSignUpRequestDto dto) {
         return ResponseEntity.ok(userService.signup(userInfo.getUsername(), dto));
     }
 
     @PatchMapping
     public ResponseEntity<UserResponseDto> update(@AuthenticationPrincipal OAuth2UserInfo userInfo,
-                                                  @RequestBody UserUpdateRequestDto dto) {
+                                                  @Valid @RequestBody UserUpdateRequestDto dto) {
         return ResponseEntity.ok(userService.update(userInfo.getUsername(), dto));
     }
 
@@ -45,6 +46,4 @@ public class UserController {
         userService.delete(userInfo.getUsername());
         return ResponseEntity.ok().build();
     }
-
-
 }
