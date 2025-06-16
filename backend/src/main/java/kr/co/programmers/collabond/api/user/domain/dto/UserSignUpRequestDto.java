@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kr.co.programmers.collabond.api.user.domain.Role;
 import lombok.Builder;
 
 @Builder
@@ -17,5 +18,5 @@ public record UserSignUpRequestDto(
         String nickname,
 
         @NotNull(message = "역할은 필수입니다")
-        String role
+        Role role
 ) { }

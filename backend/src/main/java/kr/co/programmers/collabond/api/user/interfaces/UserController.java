@@ -2,6 +2,7 @@ package kr.co.programmers.collabond.api.user.interfaces;
 
 import jakarta.validation.Valid;
 import kr.co.programmers.collabond.api.user.application.UserService;
+import kr.co.programmers.collabond.api.user.domain.dto.SignUpResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserUpdateRequestDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserResponseDto;
 import kr.co.programmers.collabond.api.user.domain.dto.UserSignUpRequestDto;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PatchMapping("/signup")
-    public ResponseEntity<UserResponseDto> signup(@AuthenticationPrincipal OAuth2UserInfo userInfo,
-                                       @Valid @RequestBody UserSignUpRequestDto dto) {
+    public ResponseEntity<SignUpResponseDto> signup(@AuthenticationPrincipal OAuth2UserInfo userInfo,
+                                                    @Valid @RequestBody UserSignUpRequestDto dto) {
         return ResponseEntity.ok(userService.signup(userInfo.getUsername(), dto));
     }
 
