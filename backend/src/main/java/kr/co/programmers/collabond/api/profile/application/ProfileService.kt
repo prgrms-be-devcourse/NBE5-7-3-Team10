@@ -11,8 +11,7 @@ import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseD
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileRequestDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileResponseDto
 import kr.co.programmers.collabond.api.profile.infrastructure.ProfileRepository
-import kr.co.programmers.collabond.api.profile.interfaces.ProfileMapper.toEntity
-import kr.co.programmers.collabond.api.profile.interfaces.ProfileMapper.toResponseDto
+import kr.co.programmers.collabond.api.profile.interfaces.toDetailResponseDto
 import kr.co.programmers.collabond.api.profile.interfaces.toEntity
 import kr.co.programmers.collabond.api.profile.interfaces.toResponseDto
 import kr.co.programmers.collabond.api.tag.application.TagService
@@ -23,8 +22,6 @@ import kr.co.programmers.collabond.shared.exception.custom.ForbiddenException
 import kr.co.programmers.collabond.shared.exception.custom.InternalException
 import kr.co.programmers.collabond.shared.exception.custom.InvalidException
 import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -34,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import java.util.function.Consumer
-import java.util.function.Function
 
 @Service
 class ProfileService(
@@ -68,7 +64,7 @@ class ProfileService(
         saveImage(profile, profileImage, "PROFILE", 1)
         saveImage(profile, thumbnailImage, "THUMBNAIL", 1)
 
-        if (extraImages != null && !extraImages.isEmpty()) {
+        if (!extraImages.isNullOrEmpty()) {
             for (i in extraImages.indices) {
                 val file = extraImages[i]
                 if (!file.isEmpty) {
@@ -80,7 +76,7 @@ class ProfileService(
         val savedProfile = profileRepository.save(profile)
         val tagIds = dto.tagIds
 
-        if (tagIds != null && tagIds.isNotEmpty()) {
+        if (tagIds.isNotEmpty()) {
             tagService.validateAndBindTags(savedProfile, tagIds)
         }
 
@@ -102,7 +98,7 @@ class ProfileService(
                 )
             }
 
-        profile.update(dto.name, dto.description, dto.addressCode, dto.address, dto.isStatus) //활성/비활성 업데이트
+        profile.update(dto.name, dto.description, dto.addressCode, dto.address, dto.status) //활성/비활성 업데이트
 
         updateImage(profile, profileImage, "PROFILE")
         updateImage(profile, thumbnailImage, "THUMBNAIL")
@@ -145,7 +141,7 @@ class ProfileService(
     }
 
     // 특정 User의 모든 프로필 조회, 각 프로필을 ResponseDto로 매필해 반환
-    fun findAllByUser(userId: Long?): List<ProfileResponseDto> {
+    fun findAllByUser(userId: Long): List<ProfileResponseDto> {
         return profileRepository.findAllByUserId(userId).stream()
             .map { profile: Profile -> toResponseDto(profile, getProfileImgName(profile)) }
             .toList()
@@ -183,7 +179,7 @@ class ProfileService(
     }
 
     private fun updateExtraImages(profile: Profile, extraImages: List<MultipartFile>?) {
-        if (extraImages != null && !extraImages.isEmpty()) {
+        if (!extraImages.isNullOrEmpty()) {
             deleteImagesByType(profile, "EXTRA")
             for (i in extraImages.indices) {
                 val file = extraImages[i]
@@ -213,12 +209,12 @@ class ProfileService(
     }
 
     fun searchProfiles(
-        type: ProfileType?,
-        addressCodes: List<String>?,
-        tagIds: List<Long?>?,
+        type: ProfileType,
+        addressCodes: List<String>,
+        tagIds: List<Long>,
         pageable: Pageable
     ): Page<ProfileDetailResponseDto> {
-        val spec = Specification { root: Root<Profile?>, query: CriteriaQuery<*>, cb: CriteriaBuilder ->
+        val spec = Specification { root: Root<Profile?>, query: CriteriaQuery<*>?, cb: CriteriaBuilder ->
             val predicates: MutableList<Predicate> = ArrayList()
             // 1) 타입 필터
             predicates.add(cb.equal(root.get<Any>("type"), type))
@@ -226,7 +222,7 @@ class ProfileService(
             predicates.add(cb.isTrue(root.get("status")))
 
             // 3) addressCode prefix 필터 (OR)
-            if (addressCodes != null && !addressCodes.isEmpty()) {
+            if (addressCodes.isNotEmpty()) {
                 val orList = addressCodes.stream()
                     .map { code: String ->
                         cb.like(
@@ -239,19 +235,20 @@ class ProfileService(
             }
 
             // 4) tagIds 필터 (JOIN + IN)
-            if (tagIds != null && !tagIds.isEmpty()) {
+            if (tagIds.isNotEmpty()) {
                 val tagJoin: Join<Profile, *> = root.join<Profile, Any>("tags")
                 predicates.add(tagJoin.get<Any>("tag").get<Any>("id").`in`(tagIds))
-                query.distinct(true) // JOIN 시 중복 제거
+                query!!.distinct(true) // JOIN 시 중복 제거
             }
             cb.and(*predicates.toTypedArray<Predicate>())
         }
 
         val page = profileRepository.findAll(spec, pageable)
         val dtos = page
-            .map<ProfileDetailResponseDto>(Function<Profile, ProfileDetailResponseDto> { obj: Profile -> obj.toDetailResponseDto() })
+            .map { profile ->
+                toDetailResponseDto(profile)
+            }
             .content
-
         return PageImpl(dtos, pageable, page.totalElements)
     }
 }

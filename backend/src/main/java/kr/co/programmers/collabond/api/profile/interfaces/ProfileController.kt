@@ -24,9 +24,9 @@ class ProfileController (
     @PostMapping
     fun create(
         @RequestPart("profileRequest") request: ProfileRequestDto,
-        @RequestPart(name = "profileImage", required = true) profileImage: MultipartFile?,
-        @RequestPart(name = "thumbnailImage", required = true) thumbnailImage: MultipartFile?,
-        @RequestPart(name = "extraImages", required = false) extraImages: List<MultipartFile?>?,
+        @RequestPart(name = "profileImage", required = true) profileImage: MultipartFile,
+        @RequestPart(name = "thumbnailImage", required = true) thumbnailImage: MultipartFile,
+        @RequestPart(name = "extraImages", required = false) extraImages: List<MultipartFile>,
         @AuthenticationPrincipal userInfo: OAuth2UserInfo
     ): ResponseEntity<ProfileResponseDto> {
         val response = profileService
@@ -38,11 +38,11 @@ class ProfileController (
     //프로필 수정
     @PatchMapping(value = ["/{profileId}"])
     fun update(
-        @PathVariable profileId: Long?,
+        @PathVariable profileId: Long,
         @RequestPart("profileRequest") request: ProfileRequestDto,
-        @RequestPart(name = "profileImage", required = false) profileImage: MultipartFile?,
-        @RequestPart(name = "thumbnailImage", required = false) thumbnailImage: MultipartFile?,
-        @RequestPart(name = "extraImages", required = false) extraImages: List<MultipartFile?>?
+        @RequestPart(name = "profileImage", required = false) profileImage: MultipartFile,
+        @RequestPart(name = "thumbnailImage", required = false) thumbnailImage: MultipartFile,
+        @RequestPart(name = "extraImages", required = false) extraImages: List<MultipartFile>?
     ): ResponseEntity<ProfileResponseDto> {
         val response = profileService
             .update(profileId, request, profileImage, thumbnailImage, extraImages)
@@ -52,7 +52,7 @@ class ProfileController (
 
     //특정 프로필 id로 프로필 상세 조회
     @GetMapping("/{profileId}")
-    fun get(@PathVariable profileId: Long?): ResponseEntity<ProfileResponseDto> {
+    fun get(@PathVariable profileId: Long): ResponseEntity<ProfileResponseDto> {
         return profileService.findById(profileId)
             .map<ResponseEntity<ProfileResponseDto>> { body: ProfileResponseDto? -> ResponseEntity.ok(body) }
             .orElse(ResponseEntity.notFound().build())
@@ -60,13 +60,13 @@ class ProfileController (
 
     //특정 유저가 가진 모든 프로필 목록 조회
     @GetMapping("/user/{userId}")
-    fun getByUser(@PathVariable userId: Long?): ResponseEntity<List<ProfileResponseDto>> {
+    fun getByUser(@PathVariable userId: Long): ResponseEntity<List<ProfileResponseDto>> {
         return ResponseEntity.ok(profileService.findAllByUser(userId))
     }
 
     //프로필 삭제시 연결된 파일은 HARDDELETE 후 프로필은 SOFTDELETE됨
     @DeleteMapping("/{profileId}")
-    fun delete(@PathVariable profileId: Long?): ResponseEntity<Void> {
+    fun delete(@PathVariable profileId: Long): ResponseEntity<Void> {
         profileService.delete(profileId)
         return ResponseEntity.noContent().build()
     }
@@ -74,9 +74,9 @@ class ProfileController (
     @GetMapping("/search")
     fun searchProfiles(
         @RequestParam type: String,
-        @RequestParam(required = false) tagIds: List<Long?>?,
-        @RequestParam(required = false) addressCodes: List<String?>?,
-        pageable: Pageable?
+        @RequestParam(required = false) tagIds: List<Long>,
+        @RequestParam(required = false) addressCodes: List<String>,
+        pageable: Pageable
     ): ResponseEntity<Page<ProfileDetailResponseDto>> {
         val profiles = profileService.searchProfiles(
             ProfileType.valueOf(type.uppercase(Locale.getDefault())), addressCodes, tagIds, pageable

@@ -31,7 +31,8 @@ fun toDto(entity: Profile) = ProfileDto(
     imageUrl = entity.images
         .firstOrNull { it.type == "PROFILE" }
         ?.file
-        ?.savedName,
+        ?.savedName
+        ?: "",
     collaboCount = entity.collaboCount,
     userId       = entity.user.id
 )
@@ -56,22 +57,25 @@ fun toResponseDto(entity: Profile, imageUrl: String?) = ProfileResponseDto(
     addressCode  = entity.addressCode,
     address = entity.address,
     collaboCount = entity.collaboCount,
-    status = entity.isStatus,
+    status = entity.status,
     tags = entity.tags
         .map { TagMapper.toDto(it.tag) },
     createdAt = entity.createdAt,
     updatedAt = entity.updatedAt
 )
 
-fun toSimpleDto(entity: Profile) = ProfileSimpleResponseDto(
-    profileId = entity.id,
-    imageUrl = entity.images
-        .firstOrNull { it.type == "PROFILE" }
-        ?.file
-        ?.savedName,
-    type = entity.type.name,
-    address = entity.address
-)
+fun toSimpleDto(entity: Profile) = entity.images
+    .firstOrNull { it.type == "PROFILE" }
+    ?.file?.let {
+        ProfileSimpleResponseDto(
+            profileId = entity.id,
+            imageUrl = it
+                .savedName,
+            type = entity.type.name,
+            address = entity.address,
+            status = TODO()
+        )
+    }
 
 fun toDetailResponseDto(profile: Profile) = ProfileDetailResponseDto(
     id = profile.id,
@@ -94,7 +98,7 @@ fun toDetailResponseDto(profile: Profile) = ProfileDetailResponseDto(
     address = profile.address,
     addressCode = profile.addressCode,
     collaboCount = profile.collaboCount,
-    status = profile.isStatus,
+    status = profile.status,
     tags = profile.tags.map { TagMapper.toDto(it.tag) },
     createdAt = profile.createdAt,
     updatedAt = profile.updatedAt

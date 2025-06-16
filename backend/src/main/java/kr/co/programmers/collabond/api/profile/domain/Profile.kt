@@ -1,6 +1,15 @@
 package kr.co.programmers.collabond.api.profile.domain
 
-import jakarta.persistence.*
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import kr.co.programmers.collabond.api.apply.domain.ApplyPost
 import kr.co.programmers.collabond.api.image.domain.Image
 import kr.co.programmers.collabond.api.profiletag.domain.ProfileTag
@@ -12,100 +21,58 @@ import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "profiles")
-@Getter
 @SQLDelete(sql = "UPDATE profiles SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-class Profile @Builder constructor(
-    @JvmField @field:JoinColumn(
-        name = "user_id",
-        nullable = false
-    ) @field:ManyToOne(fetch = FetchType.LAZY) private var user: User,
-    private var addressCode: String,
-    private var address: String,
-    @field:Enumerated(
-        EnumType.STRING
-    ) @field:Column(nullable = false) private var type: ProfileType,
-    @field:Column(
-        nullable = false
-    ) private var name: String,
-    @field:Column(nullable = false, length = 1000) private var description: String,
-    collaboCount: Int,
-    status: Boolean
-) : UpdatedEntity() {
-    @Column(name = "collabo_count", nullable = false)
-    private var collaboCount = 0
+class Profile(
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: User,
 
-    @OneToMany(mappedBy = "profile", cascade = [CascadeType.ALL], orphanRemoval = true)
-    private val images: MutableList<Image> = ArrayList()
-
-    @OneToMany(mappedBy = "profile", cascade = [CascadeType.ALL], orphanRemoval = true)
-    private val tags: MutableList<ProfileTag> = ArrayList()
-
-    @OneToMany(mappedBy = "profile")
-    private val applyPosts: List<ApplyPost> = ArrayList()
-
-    @OneToMany(mappedBy = "profile")
-    private val recruitPosts: List<RecruitPost> = ArrayList()
+    @Column(name = "address_code", nullable = false)
+    var addressCode: String,
 
     @Column(nullable = false)
-    private var status: Boolean
+    var address: String,
 
-    init {
-        this.collaboCount = collaboCount
-        this.status = status
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    val type: ProfileType,
+
+    @Column(nullable = false)
+    var name: String,
+
+    @Column(nullable = false, length = 1000)
+    var description: String,
+
+    @Column(name = "collabo_count", nullable = false)
+    var collaboCount: Int = 0,
+    @Column(nullable = false)
+    var status: Boolean = true
+) : UpdatedEntity() {
+
+    @OneToMany(mappedBy = "profile", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val images: MutableList<Image> = mutableListOf()
+
+    @OneToMany(mappedBy = "profile", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val tags: MutableList<ProfileTag> = mutableListOf()
+
+    @OneToMany(mappedBy = "profile")
+    val applyPosts: MutableList<ApplyPost> = mutableListOf()
+
+    @OneToMany(mappedBy = "profile")
+    val recruitPosts: MutableList<RecruitPost> = mutableListOf()
 
     fun update(
-        name: String?, description: String?, addressCode: String?, address: String,
-        collaboCount: Int?, status: Boolean?
-    ): Profile {
-        if (name != null) {
-            this.name = name
-        }
-
-        if (description != null) {
-            this.description = description
-        }
-
-        if (addressCode != null) {
-            this.addressCode = address
-        }
-
-        if (collaboCount != null) {
-            this.collaboCount = collaboCount
-        }
-
-        if (status != null) {
-            this.status = status
-        }
-
-        return this
-    }
-
-    val displayName: String
-        get() = if (isDeleted) "(이름없음)" else name
-
-    fun isStatus(): Boolean {
-        return java.lang.Boolean.TRUE == this.status
-    }
-
-    fun update(name: String?, description: String?, addressCode: String?, address: String?, status: Boolean) {
-        if (name != null) {
-            this.name = name
-        }
-
-        if (description != null) {
-            this.description = description
-        }
-
-        if (addressCode != null) {
-            this.addressCode = addressCode
-        }
-
-        if (address != null) {
-            this.address = address
-        }
+        name: String?,
+        description: String?,
+        addressCode: String?,
+        address: String?,
+        status: Boolean
+    ) {
+        name?.let { this.name = it }
+        description?.let { this.description = it }
+        addressCode?.let { this.addressCode = it }
+        address?.let { this.address = it }
         this.status = status
     }
 
@@ -120,6 +87,6 @@ class Profile @Builder constructor(
     }
 
     fun updateCollaboCount() {
-        this.collaboCount = this.collaboCount + 1
+        collaboCount += 1
     }
 }
