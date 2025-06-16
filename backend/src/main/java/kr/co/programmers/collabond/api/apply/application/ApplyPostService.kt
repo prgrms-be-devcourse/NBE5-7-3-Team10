@@ -1,6 +1,5 @@
 package kr.co.programmers.collabond.api.apply.application
 
-import jakarta.validation.Valid
 import kr.co.programmers.collabond.api.apply.domain.ApplyPost
 import kr.co.programmers.collabond.api.apply.domain.ApplyPostStatus
 import kr.co.programmers.collabond.api.apply.domain.dto.ApplyPostDto
@@ -10,7 +9,6 @@ import kr.co.programmers.collabond.api.apply.domain.dto.SentApplyPostsRequestDto
 import kr.co.programmers.collabond.api.apply.infrastructure.ApplyPostRepository
 import kr.co.programmers.collabond.api.apply.interfaces.ApplyPostMapper.toDto
 import kr.co.programmers.collabond.api.apply.interfaces.ApplyPostMapper.toEntity
-import kr.co.programmers.collabond.api.attachment.domain.Attachment
 import kr.co.programmers.collabond.api.attachment.interfaces.AttachmentMapper
 import kr.co.programmers.collabond.api.file.application.FileService
 import kr.co.programmers.collabond.api.mail.service.MailService
@@ -42,7 +40,7 @@ class ApplyPostService(
     @Transactional
     fun applyPost(
         recruitmentId: Long,
-        @Valid request: ApplyPostRequestDto,
+        request: ApplyPostRequestDto,
         files: List<MultipartFile>?
     ): ApplyPostDto {
 
@@ -55,20 +53,17 @@ class ApplyPostService(
 
         val applyPost = toEntity(recruitPost, profile, request)
 
-        if (!files.isNullOrEmpty()) {
-            val savedFiles = fileService.saveFiles(files)
-            val attachments = ArrayList<Attachment>()
-            for (savedFile in savedFiles) {
-                attachments.add(AttachmentMapper.toEntity(applyPost, savedFile))
-            }
+        files?.takeIf { it.isNotEmpty() }?.let {
+            val attachments = fileService.saveFiles(it).map { file ->
+                AttachmentMapper.toEntity(applyPost, file)
+            }.toMutableList()
             applyPost.updateAttachment(attachments)
         }
 
-        val save = applyPostRepository.save(applyPost)
+        val saved = applyPostRepository.save(applyPost)
+        mailService.sendReceivedApplyMail(recruitPost, profile, saved.createdAt)
 
-        mailService.sendReceivedApplyMail(recruitPost, profile, save.createdAt)
-
-        return toDto(save)
+        return toDto(saved)
     }
 
     @Transactional(readOnly = true)
@@ -80,15 +75,14 @@ class ApplyPostService(
 
         val user = userService.findByProviderId(userInfo.username)
 
-        val applyPosts =
-            if (request.status != null)
-                applyPostRepository
-                    .findAllSentByUserIdAndStatus(user.id, request.status, pageable)
-            else
-                applyPostRepository
-                    .findAllSentByUser(user.id, pageable)
-
-        return applyPosts
+        return when (request.status) {
+            null -> applyPostRepository.findAllSentByUser(user.id, pageable)
+            else -> applyPostRepository.findAllSentByUserIdAndStatus(
+                user.id,
+                request.status,
+                pageable
+            )
+        }
     }
 
     @Transactional(readOnly = true)
@@ -100,15 +94,14 @@ class ApplyPostService(
 
         val user = userService.findByProviderId(userInfo.username)
 
-        val applyPosts =
-            if (request.status != null)
-                applyPostRepository
-                    .findAllReceivedByUserIdAndStatus(user.id, request.status, pageable)
-            else
-                applyPostRepository
-                    .findAllReceivedByUser(user.id, pageable)
-
-        return applyPosts
+        return when (request.status) {
+            null -> applyPostRepository.findAllReceivedByUser(user.id, pageable)
+            else -> applyPostRepository.findAllReceivedByUserIdAndStatus(
+                user.id,
+                request.status,
+                pageable
+            )
+        }
     }
 
     @Transactional
@@ -126,11 +119,12 @@ class ApplyPostService(
             throw ForbiddenException(ErrorCode.FORBIDDEN_REQUEST)
         }
 
-        receivedApply.updateStatus(ApplyPostStatus.ACCEPTED)
-        updateCollaboCount(receivedApply)
-        val acceptedAt = LocalDateTime.now()
+        receivedApply.apply {
+            updateStatus(ApplyPostStatus.ACCEPTED)
+            updateCollaboCount(this)
+        }
 
-        mailService.sendBondCompletionEmails(receivedApply, acceptedAt)
+        mailService.sendBondCompletionEmails(receivedApply, LocalDateTime.now())
     }
 
     private fun updateCollaboCount(
