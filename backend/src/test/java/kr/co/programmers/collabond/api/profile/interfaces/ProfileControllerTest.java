@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(ProfileController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(properties = {
@@ -46,7 +45,6 @@ class ProfileControllerTest {
 
     @MockitoBean
     kr.co.programmers.collabond.core.auth.jwt.TokenAuthenticationFilter tokenAuthenticationFilter;
-
 
     @Autowired
     ObjectMapper objectMapper;
@@ -99,68 +97,6 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.name").value("새 프로필"));
     }
 
-//    @Test
-//    @DisplayName("PATCH /api/profiles/{id} - multipart/form-data 수정 요청 정상 처리")
-//    void updateProfileSuccess_multipart() throws Exception {
-//        ProfileRequestDto dto = ProfileRequestDto.builder()
-//                .name("수정된 프로필")
-//                .description("설명 수정")
-//                .build();
-//
-//        ProfileResponseDto mock = ProfileResponseDto.builder()
-//                .id(5L)
-//                .name("수정된 프로필")
-//                .build();
-//
-//        when(profileService.update(
-//                eq(5L),
-//                any(ProfileRequestDto.class),
-//                any(MultipartFile.class),
-//                any(MultipartFile.class),
-//                anyList()
-//        )).thenReturn(mock);
-//
-//        MockMultipartFile requestPart = new MockMultipartFile(
-//                "profileRequest", "", "application/json", objectMapper.writeValueAsBytes(dto)
-//        );
-//        MockMultipartFile profileImage = new MockMultipartFile(
-//                "profileImage", "main.jpg", "image/jpeg", "dummy-image".getBytes()
-//        );
-//        MockMultipartFile thumbImage = new MockMultipartFile(
-//                "thumbnailImage", "thumb.jpg", "image/jpeg", "dummy-thumb".getBytes()
-//        );
-//
-//        MvcResult result = mockMvc.perform(multipart("/api/profiles/5")
-//                        .file(requestPart)
-//                        .file(profileImage)
-//                        .file(thumbImage)
-//                        .with(req -> { req.setMethod("PATCH"); return req; })
-//                        .contentType(MediaType.MULTIPART_FORM_DATA)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        MockHttpServletResponse resp = result.getResponse();
-//        System.out.println("▶ response status: " + resp.getStatus());
-//        System.out.println("▶ response contentType: " + resp.getContentType());
-//        System.out.println("▶ response body: '" + resp.getContentAsString() + "'");
-//
-//        mockMvc.perform(multipart("/api/profiles/5")
-//                        .file(requestPart)
-//                        .file(profileImage)
-//                        .file(thumbImage)
-//                        .with(r -> { r.setMethod("PATCH"); return r; })
-//                        .contentType(MediaType.MULTIPART_FORM_DATA)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id").value(5L))
-//                .andExpect(jsonPath("$.name").value("수정된 프로필"));
-//    }
-
-
     @Test
     @DisplayName("GET /api/profiles/{id} - 존재하지 않는 ID 요청 시 404 반환")
     void getProfileNotFound_returns404() throws Exception {
@@ -183,7 +119,6 @@ class ProfileControllerTest {
         mockMvc.perform(get("/api/profiles/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));
-
     }
 
     @Test

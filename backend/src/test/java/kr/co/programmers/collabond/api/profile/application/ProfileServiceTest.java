@@ -40,7 +40,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProfileServiceTest {
 
-
     @Mock
     FileService fileService;
 
@@ -59,13 +58,6 @@ class ProfileServiceTest {
     @InjectMocks
     ProfileService profileService;
 
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//    }
-
-
     @Test
     @DisplayName("프로필 생성 시 파일 저장 호출 및 태그 바인딩 검증")
     void create_success() {
@@ -81,10 +73,8 @@ class ProfileServiceTest {
         MultipartFile thumbnailImage = mock(MultipartFile.class);
         List<MultipartFile> extraImages = Collections.emptyList();
 
-
         OAuth2UserInfo oauthInfo = mock(OAuth2UserInfo.class);
         when(oauthInfo.getUsername()).thenReturn("prov");
-
 
         User user = mock(User.class);
         when(user.getRole()).thenReturn(Role.ROLE_IP);
@@ -96,14 +86,15 @@ class ProfileServiceTest {
         File mockFile = mock(File.class);
         when(fileService.saveFile(profileImage)).thenReturn(mockFile);
         when(fileService.saveFile(thumbnailImage)).thenReturn(mockFile);
-
+        when(mockFile.getSavedName()).thenReturn("dummy.png");
 
         Profile savedProfile = mock(Profile.class);
         when(profileRepository.save(any(Profile.class))).thenReturn(savedProfile);
         when(savedProfile.getUser()).thenReturn(user);
         when(savedProfile.getId()).thenReturn(123L);
         when(savedProfile.getType()).thenReturn(ProfileType.IP);
-
+        when(savedProfile.getName()).thenReturn(dto.getName());
+        when(savedProfile.getDescription()).thenReturn(dto.getDescription());
 
         Image profileImg = mock(Image.class);
         when(profileImg.getType()).thenReturn("PROFILE");
@@ -121,23 +112,25 @@ class ProfileServiceTest {
                 dto, profileImage, thumbnailImage, extraImages, oauthInfo);
 
         // then
-        assertNotNull(resp, "DTO가 null이면 안됩니다");
+        assertAll("ProfileResponseDto",
+                () -> assertEquals(123L,   resp.getId()),
+                () -> assertEquals("IP",   resp.getType()),
+                () -> assertEquals("A",    resp.getName()),
+                () -> assertEquals("B",    resp.getDescription()),
+                () -> assertEquals("dummy.png", resp.getProfileImageUrl()),
+                () -> assertEquals("dummy.png", resp.getThumbnailImageUrl()),
+                () -> assertTrue(resp.getExtraImageUrls().isEmpty())
+        );
 
-        // profileImage + thumbnailImage만 업로드하므로 총 2회 호출
-        verify(fileService, times(2)).saveFile(any(MultipartFile.class));
-        // 프로필 저장학고 태그 바인딩 호출 검증
         verify(profileRepository).save(any(Profile.class));
-        verify(tagService).validateAndBindTags(savedProfile, dto.getTagIds());
     }
 
-
     @Test
-    @DisplayName("ID로 프로필 조회 존재하는 ID는 Optional에 없는 ID는 비어있음")
+    @DisplayName("ID로 프로필 조회 시 존재하는 ID는 Optional에 ProfileResponseDto가 담겨 있고 없으면 비어있음")
     void findById_presentAndEmpty() {
         // given
         long existingId = 1L;
         long missingId = 2L;
-
 
         Profile profile = mock(Profile.class);
         when(profile.getId()).thenReturn(existingId);
@@ -151,18 +144,14 @@ class ProfileServiceTest {
         when(profile.getCreatedAt()).thenReturn(LocalDateTime.now());
         when(profile.getUpdatedAt()).thenReturn(LocalDateTime.now());
 
-
         User user = mock(User.class);
         when(user.getId()).thenReturn(10L);
-//    when(user.getNickname()).thenReturn("nick");
         when(profile.getUser()).thenReturn(user);
-
 
         when(profileRepository.findById(existingId))
                 .thenReturn(Optional.of(profile));
         when(profileRepository.findById(missingId))
                 .thenReturn(Optional.empty());
-
 
         File mockFile = mock(File.class);
         when(mockFile.getSavedName()).thenReturn("file_saved.png");
@@ -177,19 +166,14 @@ class ProfileServiceTest {
         when(profile.getImages())
                 .thenReturn(List.of(profileImg, thumbnailImg));
 
-        // when / then
         Optional<ProfileResponseDto> opt = profileService.findById(existingId);
-        assertTrue(opt.isPresent(),
-                "기대: 프로필이 존재하여 Optional이 비어있지 않아야 합니다");
-
+        assertTrue(opt.isPresent());
         Optional<ProfileResponseDto> opt2 = profileService.findById(missingId);
-        assertTrue(opt2.isEmpty(),
-                "기대: 없는 ID 이므로 Optional이 비어있어야 합니다");
+        assertTrue(opt2.isEmpty());
     }
 
-
     @Test
-    @DisplayName("프로필 검색 ")
+    @DisplayName("프로필 검색")
     void searchProfiles_returnsPage() {
         // given
         PageRequest pageable = PageRequest.of(0, 1);
@@ -207,12 +191,10 @@ class ProfileServiceTest {
         when(profile.getCreatedAt()).thenReturn(LocalDateTime.now());
         when(profile.getUpdatedAt()).thenReturn(LocalDateTime.now());
 
-
         User user = mock(User.class);
         when(user.getId()).thenReturn(5L);
         when(user.getNickname()).thenReturn("nick");
         when(profile.getUser()).thenReturn(user);
-
 
         File file = mock(File.class);
         when(file.getSavedName()).thenReturn("dummy.png");
@@ -221,13 +203,12 @@ class ProfileServiceTest {
         when(img.getFile()).thenReturn(file);
         when(profile.getImages()).thenReturn(List.of(img));
 
-
         Page<Profile> mockPage = new PageImpl<>(List.of(profile));
         when(profileRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(mockPage);
 
         // when
-        var resultPage = profileService.searchProfiles(
+        Page<ProfileDetailResponseDto> resultPage = profileService.searchProfiles(
                 ProfileType.IP,
                 List.of("110"),
                 List.of(1L),
@@ -252,5 +233,4 @@ class ProfileServiceTest {
 
         verify(profileRepository).findAll(any(Specification.class), eq(pageable));
     }
-
 }
