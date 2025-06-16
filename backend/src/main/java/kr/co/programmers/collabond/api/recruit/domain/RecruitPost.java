@@ -37,7 +37,7 @@ public class RecruitPost extends UpdatedEntity {
     private LocalDateTime deadline;
 
     @Builder
-    public RecruitPost(Profile profile, String title, String description,
+    private RecruitPost(Profile profile, String title, String description,
                         RecruitPostStatus status, LocalDateTime deadline) {
 
         this.profile = profile;

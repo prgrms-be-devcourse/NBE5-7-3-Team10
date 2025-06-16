@@ -35,7 +35,7 @@ public class User extends UpdatedEntity {
     private List<Profile> profiles;
 
     @Builder
-    public User(String email, String nickname, Role role, String providerId) {
+    private User(String email, String nickname, Role role, String providerId) {
         this.email = email;
         this.nickname = nickname;
         this.role = role;
