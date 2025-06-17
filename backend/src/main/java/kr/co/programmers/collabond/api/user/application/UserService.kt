@@ -7,12 +7,12 @@ import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
 import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository
-import kr.co.programmers.collabond.api.user.interfaces.toResponseDto
-import kr.co.programmers.collabond.api.user.interfaces.toSignUpResponseDto
+import kr.co.programmers.collabond.api.user.interfaces.UserMapper.toResponseDto
+import kr.co.programmers.collabond.api.user.interfaces.UserMapper.toSignUpResponseDto
 import kr.co.programmers.collabond.core.auth.jwt.TokenService
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
+import kr.co.programmers.collabond.shared.exception.InvalidException
+import kr.co.programmers.collabond.shared.exception.NotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

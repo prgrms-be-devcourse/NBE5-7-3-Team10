@@ -8,7 +8,7 @@ data class UserResponseDto(
     val nickname: String,
     val role: String,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val updatedAt: LocalDateTime?
 )
 
 data class SignUpResponseDto(
