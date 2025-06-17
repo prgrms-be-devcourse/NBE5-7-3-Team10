@@ -83,7 +83,7 @@ class Profile(
 
     fun addTag(tag: ProfileTag) {
         tags.add(tag)
-        tag.setProfile(this)
+        tag.profile = this
     }
 
     fun updateCollaboCount() {
