@@ -34,7 +34,7 @@ class RecruitPostService(
         val profile = profileService.findByProfileId(request.profileId)
         val loginUser = userService.findByProviderId(userInfo.username)
 
-        require(profile.user.id == loginUser.id) { throw ForbiddenException() }
+        if (profile.user.id != loginUser.id) throw ForbiddenException()
 
         val post = RecruitPostMapper.toEntity(request, profile)
         val savedPost = recruitPostRepository.save(post)
@@ -51,10 +51,10 @@ class RecruitPostService(
         val post = findRecruitPostById(recruitmentId)
 
         // 소프트 삭제된 게시글은 수정할 수 없습니다.
-        require(post.deletedAt == null) { throw InvalidException(ErrorCode.REMOVED_RECRUIT_POST) }
+        if (post.deletedAt != null) throw InvalidException(ErrorCode.REMOVED_RECRUIT_POST)
 
         val loginUser = userService.findByProviderId(userInfo.username)
-        require(post.profile?.user?.id == loginUser.id) { throw ForbiddenException() }
+        if (post.profile?.user?.id != loginUser.id) throw ForbiddenException()
 
         post.update(
             title = request.title,
@@ -71,7 +71,7 @@ class RecruitPostService(
         val post = findRecruitPostById(recruitmentId)
         val loginUser = userService.findByProviderId(userInfo.username)
 
-        require(post.profile?.user?.id == loginUser.id) { throw ForbiddenException() }
+        if (post.profile?.user?.id != loginUser.id) throw ForbiddenException()
 
         recruitPostRepository.delete(post)
     }
