@@ -3,9 +3,11 @@ package kr.co.programmers.collabond.core.auth.oauth2
 import jakarta.transaction.Transactional
 import kr.co.programmers.collabond.api.user.domain.Role
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository
+import kr.co.programmers.collabond.core.auth.oauth2.OAuth2Mapper.toOAuth2UserInfo
+import kr.co.programmers.collabond.core.auth.oauth2.OAuth2Mapper.toUser
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.DuplicatedException
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
+import kr.co.programmers.collabond.shared.exception.DuplicatedException
+import kr.co.programmers.collabond.shared.exception.InvalidException
 import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
