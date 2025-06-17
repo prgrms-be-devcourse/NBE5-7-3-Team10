@@ -1,12 +1,10 @@
 package kr.co.programmers.collabond.api.apply.domain.dto
 
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 
 class ApplyPostRequestDto(
-    @field: NotBlank
     val profileId: Long,
-    @field: NotNull
+    @field: Size(max = 1000)
     val content: String
 ) {
 }
