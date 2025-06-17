@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,11 +30,8 @@ class SoftDeleteTest {
         // given
         final String TEST_EMAIL = "test@example.com";
 
-        User user = User.builder()
-                .email(TEST_EMAIL)
-                .nickname("테스트유저")
-                .role(Role.ROLE_IP)
-                .build();
+        User user = new User(TEST_EMAIL, "테스트유저", Role.ROLE_IP, null, List.of());
+
         userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
@@ -46,11 +43,11 @@ class SoftDeleteTest {
 
         // then
         // 1. 일반 조회 시 조회되지 않아야 함
-        assertThat(userRepository.findByEmail(TEST_EMAIL).isEmpty()).isTrue();
+        assertThat(userRepository.findByEmail(TEST_EMAIL) == null).isTrue();
 
         // 2. 네이티브 쿼리로 조회 시 레코드는 존재하고 deleted_at이 설정되어 있어야 함
-        Optional<User> found = userRepository.findByEmailAndDeletedAtIsNotNull(TEST_EMAIL);
-        assertThat(found.isPresent()).isTrue();
-        assertThat(found.get().getDeletedAt()).isNotNull();
+        User found = userRepository.findByEmailAndDeletedAtIsNotNull(TEST_EMAIL);
+        assertThat(found != null).isTrue();
+        assertThat(found.getDeletedAt()).isNotNull();
     }
 }

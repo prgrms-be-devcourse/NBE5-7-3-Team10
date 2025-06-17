@@ -1,6 +1,5 @@
 package kr.co.programmers.collabond.api.user.domain
 
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
@@ -12,7 +11,6 @@ data class UserSignUpRequestDto(
     )
     val nickname: String,
 
-    @field:NotNull(message = "역할은 필수입니다")
     val role: Role
 )
 

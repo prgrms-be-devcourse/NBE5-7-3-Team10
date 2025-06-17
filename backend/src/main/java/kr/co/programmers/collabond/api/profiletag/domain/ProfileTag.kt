@@ -22,9 +22,5 @@ class ProfileTag(
 ) {
 
     constructor(tag: Tag) : this(null, tag)
-
-    fun setProfile(profile: Profile) {
-        this.profile = profile
-    }
 }
 
