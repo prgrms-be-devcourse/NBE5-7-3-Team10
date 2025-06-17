@@ -1,10 +1,11 @@
 package kr.co.programmers.collabond.shared.exception
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import jakarta.validation.ConstraintViolationException
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.security.SignatureException
 import kr.co.programmers.collabond.shared.util.ApiErrorResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -64,4 +65,30 @@ class ApiExceptionHandler {
         return ApiErrorResponse.error(exception.message, exception.status)
     }
 
+    @ExceptionHandler(SignatureException::class)
+    fun <T> handleSignatureException(): ResponseEntity<ApiErrorResponse<T>> {
+        val exception = ForbiddenException(ErrorCode.INVALID_SIGNATURE)
+
+        logger.debug { "SignatureException: ${exception.message}" }
+
+        return ApiErrorResponse.error(exception.message, exception.status)
+    }
+
+    @ExceptionHandler(MalformedJwtException::class)
+    fun <T> handleMalformedJwtException(): ResponseEntity<ApiErrorResponse<T>> {
+        val exception = InvalidException(ErrorCode.INVALID_TOKEN)
+
+        logger.debug { "MalformedJwtException: ${exception.message}" }
+
+        return ApiErrorResponse.error(exception.message, exception.status)
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun <T> handleAccessDeniedException(): ResponseEntity<ApiErrorResponse<T>> {
+        val exception = ForbiddenException(ErrorCode.FORBIDDEN_REQUEST)
+
+        logger.debug { "AccessDeniedException: ${exception.message}" }
+
+        return ApiErrorResponse.error(exception.message, exception.status)
+    }
 }
