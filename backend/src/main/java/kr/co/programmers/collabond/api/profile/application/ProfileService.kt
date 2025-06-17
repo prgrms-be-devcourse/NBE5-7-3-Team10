@@ -4,7 +4,7 @@ import jakarta.persistence.criteria.*
 import kr.co.programmers.collabond.api.file.application.FileService
 import kr.co.programmers.collabond.api.image.application.ImageService
 import kr.co.programmers.collabond.api.image.domain.Image
-import kr.co.programmers.collabond.api.image.infrastructure.toImage
+import kr.co.programmers.collabond.api.image.infrastructure.ImageMapper
 import kr.co.programmers.collabond.api.profile.domain.Profile
 import kr.co.programmers.collabond.api.profile.domain.ProfileType
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseDto
@@ -18,10 +18,10 @@ import kr.co.programmers.collabond.api.tag.application.TagService
 import kr.co.programmers.collabond.api.user.application.UserService
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserInfo
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.ForbiddenException
-import kr.co.programmers.collabond.shared.exception.custom.InternalException
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
+import kr.co.programmers.collabond.shared.exception.ForbiddenException
+import kr.co.programmers.collabond.shared.exception.InternalException
+import kr.co.programmers.collabond.shared.exception.InvalidException
+import kr.co.programmers.collabond.shared.exception.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -158,7 +158,7 @@ class ProfileService(
         try {
 
             val file = fileService.saveFile(imageFile)
-            val image = toImage(profile, file, type, priority)
+            val image = ImageMapper.toEntity(profile, file, type, priority)
             profile.addImage(image)
         } catch (e: RuntimeException) {
             throw InternalException(ErrorCode.SAVE_IMAGE_ERROR)

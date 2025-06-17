@@ -7,13 +7,13 @@ import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileRequestDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileResponseDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileSimpleResponseDto
-import kr.co.programmers.collabond.api.tag.interfaces.toTagResponse
+import kr.co.programmers.collabond.api.tag.interfaces.TagMapper
 import kr.co.programmers.collabond.api.user.domain.User
 
 fun toEntity(dto: ProfileRequestDto, user: User) = Profile(
     user = user,
-    addressCode = dto.addressCode,
-    address = dto.address,
+    addressCode = dto.addressCode!!,
+    address = dto.address!!,
     type = ProfileType.valueOf(dto.type),
     name = dto.name,
     description = dto.description,
@@ -56,10 +56,9 @@ fun toResponseDto(entity: Profile, imageUrl: String?) = ProfileResponseDto(
     address = entity.address,
     collaboCount = entity.collaboCount,
     status = entity.status,
-    tags = entity.tags
-        .map { toTagResponse(it.tag!!) },
+    tags = entity.tags.map { TagMapper.toDto(it.tag) },
     createdAt = entity.createdAt,
-    updatedAt = entity.updatedAt
+    updatedAt = entity.updatedAt!!
 )
 
 fun toSimpleDto(entity: Profile) = entity.images
@@ -97,7 +96,7 @@ fun toDetailResponseDto(profile: Profile) = ProfileDetailResponseDto(
     addressCode = profile.addressCode,
     collaboCount = profile.collaboCount,
     status = profile.status,
-    tags = profile.tags.map { toTagResponse(it.tag!!) },
+    tags = profile.tags.map { TagMapper.toDto(it.tag) },
     createdAt = profile.createdAt,
-    updatedAt = profile.updatedAt
+    updatedAt = profile.updatedAt!!
 )
