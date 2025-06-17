@@ -23,13 +23,13 @@ class ApplyPost(
     @field:ManyToOne(fetch = FetchType.LAZY)
     var profile: Profile,
 
+    @field:NotNull
     @field:Column(
-        nullable = false,
         length = 1000
     )
     var content: String,
 
-    @field:Column(nullable = false)
+    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     var status: ApplyPostStatus,
 
