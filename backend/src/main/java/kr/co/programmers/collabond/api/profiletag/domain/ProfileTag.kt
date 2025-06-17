@@ -3,7 +3,6 @@ package kr.co.programmers.collabond.api.profiletag.domain
 import jakarta.persistence.*
 import kr.co.programmers.collabond.api.profile.domain.Profile
 import kr.co.programmers.collabond.api.tag.domain.Tag
-import lombok.Builder
 
 @Entity
 @Table(name = "profile_tags")
@@ -18,7 +17,6 @@ class ProfileTag() {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private val id: Long? = null
-
 
     protected constructor(dummy: Boolean) : this()
 
