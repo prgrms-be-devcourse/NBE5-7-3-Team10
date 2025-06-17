@@ -6,9 +6,13 @@ import kr.co.programmers.collabond.api.profile.domain.ProfileType;
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseDto;
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileRequestDto;
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileResponseDto;
+import kr.co.programmers.collabond.api.user.domain.Role;
+import kr.co.programmers.collabond.core.auth.jwt.TokenService;
+import kr.co.programmers.collabond.util.WithCustomMockUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
@@ -20,21 +24,26 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ProfileController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@WebMvcTest(
+        controllers = ProfileController.class,
+        excludeAutoConfiguration = ErrorMvcAutoConfiguration.class
+)
 @TestPropertySource(properties = {
         "server.port=0",
         "server.address=localhost"
 })
+@AutoConfigureMockMvc(addFilters = false)
 class ProfileControllerTest {
 
     @Autowired
@@ -44,22 +53,29 @@ class ProfileControllerTest {
     ProfileService profileService;
 
     @MockitoBean
-    kr.co.programmers.collabond.core.auth.jwt.TokenAuthenticationFilter tokenAuthenticationFilter;
+    TokenService tokenService;
 
     @Autowired
     ObjectMapper objectMapper;
 
     @Test
+    @WithCustomMockUser(username = "testProviderId", role = Role.ROLE_STORE)
     @DisplayName("POST /api/profiles - multipart/form-data 요청에 대해 201 생성 응답")
     void createProfileSuccess_multipart() throws Exception {
-        ProfileRequestDto dto = new ProfileRequestDto(
-                0L, "IP", "새 프로필", "테스트용", null, null, true, List.of()
-        );
 
-        ProfileResponseDto mock = ProfileResponseDto.builder()
-                .id(99L)
-                .name("새 프로필")
-                .build();
+        ProfileRequestDto dto = mock(ProfileRequestDto.class);
+        when(dto.getUserId()).thenReturn(0L);
+        when(dto.getType()).thenReturn("IP");
+        when(dto.getName()).thenReturn("새 프로필");
+        when(dto.getDescription()).thenReturn("테스트용");
+        when(dto.getAddress()).thenReturn("TmpAddress");
+        when(dto.getAddressCode()).thenReturn("TmpAddresscode");
+        when(dto.getStatus()).thenReturn(true);
+        when(dto.getTagIds()).thenReturn(Collections.emptyList());
+
+        ProfileResponseDto mock = mock(ProfileResponseDto.class);
+        when(mock.getId()).thenReturn(99L);
+        when(mock.getName()).thenReturn("새 프로필");
 
         when(profileService.create(
                 any(ProfileRequestDto.class),
@@ -108,12 +124,12 @@ class ProfileControllerTest {
     @Test
     @DisplayName("GET /api/profiles/{id} - 성공")
     void getProfileById() throws Exception {
-        ProfileResponseDto mockResponse = ProfileResponseDto.builder()
-                .id(1L)
-                .name("테스트")
-                .build();
 
-        when(profileService.findById(1L)).thenReturn(Optional.of(mockResponse));
+        ProfileResponseDto mock = mock(ProfileResponseDto.class);
+        when(mock.getId()).thenReturn(1L);
+        when(mock.getName()).thenReturn("새 프로필");
+
+        when(profileService.findById(1L)).thenReturn(Optional.of(mock));
 
         mockMvc.perform(get("/api/profiles/1"))
                 .andExpect(status().isOk())
@@ -123,10 +139,15 @@ class ProfileControllerTest {
     @Test
     @DisplayName("GET /api/profiles/user/{userId} - 성공")
     void getProfilesByUserId() throws Exception {
-        List<ProfileResponseDto> profiles = List.of(
-                ProfileResponseDto.builder().id(1L).name("프로필1").build(),
-                ProfileResponseDto.builder().id(2L).name("프로필2").build()
-        );
+        ProfileResponseDto mock1 = mock(ProfileResponseDto.class);
+        when(mock1.getId()).thenReturn(1L);
+        when(mock1.getName()).thenReturn("새 프로필1");
+
+        ProfileResponseDto mock2 = mock(ProfileResponseDto.class);
+        when(mock2.getId()).thenReturn(2L);
+        when(mock2.getName()).thenReturn("새 프로필2");
+
+        List<ProfileResponseDto> profiles = List.of( mock1, mock2 );
 
         when(profileService.findAllByUser(1L)).thenReturn(profiles);
 
@@ -145,8 +166,12 @@ class ProfileControllerTest {
     @Test
     @DisplayName("GET /api/profiles/search - 성공")
     void searchProfiles() throws Exception {
+        ProfileDetailResponseDto mock = mock(ProfileDetailResponseDto.class);
+        when(mock.getId()).thenReturn(1L);
+        when(mock.getName()).thenReturn("프로필");
+
         PageImpl<ProfileDetailResponseDto> result = new PageImpl<>(
-                List.of(ProfileDetailResponseDto.builder().id(1L).name("SearchProfile").build()),
+                List.of(mock),
                 PageRequest.of(0, 10), 1
         );
 
@@ -162,6 +187,6 @@ class ProfileControllerTest {
                         .param("tagIds", "1", "2")
                         .param("addressCodes", "11000", "22000"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].name").value("SearchProfile"));
+                .andExpect(jsonPath("$.content[0].name").value("프로필"));
     }
 }

@@ -62,12 +62,13 @@ class ProfileServiceTest {
     @DisplayName("프로필 생성 시 파일 저장 호출 및 태그 바인딩 검증")
     void create_success() {
         // given
-        ProfileRequestDto dto = ProfileRequestDto.builder()
-                .type("IP")
-                .name("A")
-                .description("B")
-                .tagIds(List.of(1L))
-                .build();
+        ProfileRequestDto dto = mock(ProfileRequestDto.class);
+        when(dto.getType()).thenReturn("IP");
+        when(dto.getName()).thenReturn("A");
+        when(dto.getDescription()).thenReturn("B");
+        when(dto.getTagIds()).thenReturn(List.of(1l));
+        when(dto.getAddressCode()).thenReturn("TmpAddresscode");
+        when(dto.getAddress()).thenReturn("TmpAddress");
 
         MultipartFile profileImage = mock(MultipartFile.class);
         MultipartFile thumbnailImage = mock(MultipartFile.class);
@@ -93,8 +94,15 @@ class ProfileServiceTest {
         when(savedProfile.getUser()).thenReturn(user);
         when(savedProfile.getId()).thenReturn(123L);
         when(savedProfile.getType()).thenReturn(ProfileType.IP);
-        when(savedProfile.getName()).thenReturn(dto.getName());
-        when(savedProfile.getDescription()).thenReturn(dto.getDescription());
+        when(savedProfile.getName()).thenReturn("A");
+        when(savedProfile.getDescription()).thenReturn("B");
+        LocalDateTime now = LocalDateTime.now();
+        when(savedProfile.getCreatedAt()).thenReturn(now);
+        when(savedProfile.getUpdatedAt()).thenReturn(now);
+        when(savedProfile.getAddress()).thenReturn("TmpAddress");
+        when(savedProfile.getAddressCode()).thenReturn("TmpAddresscode");
+        when(savedProfile.getStatus()).thenReturn(true);
+        when(savedProfile.getTags()).thenReturn(Collections.emptyList());
 
         Image profileImg = mock(Image.class);
         when(profileImg.getType()).thenReturn("PROFILE");
@@ -186,7 +194,7 @@ class ProfileServiceTest {
         when(profile.getAddressCode()).thenReturn("110");
         when(profile.getAddress()).thenReturn("Addr");
         when(profile.getCollaboCount()).thenReturn(0);
-        when(profile.isStatus()).thenReturn(true);
+        when(profile.getStatus()).thenReturn(true);
         when(profile.getTags()).thenReturn(Collections.emptyList());
         when(profile.getCreatedAt()).thenReturn(LocalDateTime.now());
         when(profile.getUpdatedAt()).thenReturn(LocalDateTime.now());
@@ -219,17 +227,17 @@ class ProfileServiceTest {
         assertEquals(1, resultPage.getTotalElements());
         assertEquals(1, resultPage.getContent().size());
 
-        ProfileDetailResponseDto dto = resultPage.getContent().get(0);
-        assertEquals(1L, dto.id());
-        assertEquals(5L, dto.userId());
-        assertEquals("IP", dto.type());
-        assertEquals("A", dto.name());
-        assertEquals("dummy.png", dto.profileImageUrl());
-        assertEquals("110", dto.addressCode());
-        assertEquals("Addr", dto.address());
-        assertEquals(0, dto.collaboCount());
-        assertTrue(dto.status());
-        assertEquals("nick", dto.nickname());
+        ProfileDetailResponseDto dto = resultPage.getContent().getFirst();
+        assertEquals(1L, dto.getId());
+        assertEquals(5L, dto.getUserId());
+        assertEquals("IP", dto.getType());
+        assertEquals("A",dto.getName());
+        assertEquals("dummy.png", dto.getProfileImageUrl());
+        assertEquals("110", dto.getAddressCode());
+        assertEquals("Addr", dto.getAddress());
+        assertEquals(0, dto.getCollaboCount());
+        assertTrue(dto.getStatus());
+        assertEquals("nick", dto.getNickname());
 
         verify(profileRepository).findAll(any(Specification.class), eq(pageable));
     }
