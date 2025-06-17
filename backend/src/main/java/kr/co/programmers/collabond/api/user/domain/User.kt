@@ -24,7 +24,6 @@ class User(
     var nickname: String,
 
     @Enumerated(EnumType.STRING)
-    @field:Size(max = 20)
     var role: Role,
 
     var providerId: String? = null,

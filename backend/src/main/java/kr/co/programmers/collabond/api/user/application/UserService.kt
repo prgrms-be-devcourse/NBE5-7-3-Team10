@@ -1,12 +1,15 @@
 package kr.co.programmers.collabond.api.user.application
 
 import kr.co.programmers.collabond.api.user.domain.Role
+import kr.co.programmers.collabond.api.user.domain.SignUpResponseDto
 import kr.co.programmers.collabond.api.user.domain.User
 import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
 import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository
 import kr.co.programmers.collabond.api.user.interfaces.toResponseDto
+import kr.co.programmers.collabond.api.user.interfaces.toSignUpResponseDto
+import kr.co.programmers.collabond.core.auth.jwt.TokenService
 import kr.co.programmers.collabond.shared.exception.ErrorCode
 import kr.co.programmers.collabond.shared.exception.custom.InvalidException
 import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
@@ -15,10 +18,11 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenService: TokenService
 ) {
     @Transactional
-    fun signup(providerId: String, dto: UserSignUpRequestDto): UserResponseDto {
+    fun signup(providerId: String, dto: UserSignUpRequestDto): SignUpResponseDto {
         val user = userRepository.findByProviderId(providerId)
             ?: throw NotFoundException(ErrorCode.USER_NOT_FOUND)
 
@@ -28,7 +32,7 @@ class UserService(
 
         return user
             .update(nickname = dto.nickname, role = dto.role)
-            .let {toResponseDto(it)}
+            .let { toSignUpResponseDto(it, tokenService.createAccessToken(providerId, dto.role))}
     }
 
     @Transactional

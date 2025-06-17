@@ -120,8 +120,7 @@ public class ApplyPostService {
 
         User loginUser = userService.findByProviderId(userInfo.getUsername());
 
-        if (!receivedApply.getRecruitPost().getProfile().getUser().getId()
-                .equals(loginUser.getId())) {
+        if (receivedApply.getRecruitPost().getProfile().getUser().getId() != loginUser.getId()) {
             throw new ForbiddenException(ErrorCode.FORBIDDEN_REQUEST);
         }
 

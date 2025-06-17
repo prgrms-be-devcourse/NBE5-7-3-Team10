@@ -2,6 +2,7 @@ package kr.co.programmers.collabond.api.user.interfaces
 
 import jakarta.validation.Valid
 import kr.co.programmers.collabond.api.user.application.UserService
+import kr.co.programmers.collabond.api.user.domain.SignUpResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserResponseDto
 import kr.co.programmers.collabond.api.user.domain.UserSignUpRequestDto
 import kr.co.programmers.collabond.api.user.domain.UserUpdateRequestDto
@@ -16,9 +17,7 @@ class UserController(
     private val userService: UserService
 ) {
     @GetMapping
-    fun getMyUserInfo(
-        @AuthenticationPrincipal userInfo: OAuth2UserInfo
-    ): ResponseEntity<UserResponseDto> =
+    fun getMyUserInfo(@AuthenticationPrincipal userInfo: OAuth2UserInfo): ResponseEntity<UserResponseDto> =
         ResponseEntity.ok(userService.findByProviderIdToDto(userInfo.username))
 
     @GetMapping("/{userId}")
@@ -29,7 +28,7 @@ class UserController(
     fun signup(
         @AuthenticationPrincipal userInfo: OAuth2UserInfo,
         @Valid @RequestBody dto: UserSignUpRequestDto
-    ): ResponseEntity<UserResponseDto> =
+    ): ResponseEntity<SignUpResponseDto> =
         ResponseEntity.ok(userService.signup(userInfo.username, dto))
 
     @PatchMapping

@@ -43,6 +43,8 @@ const UserTypeSelectionPage = () => {
       const response = await userAPI.signup(formData)
       setNickname(response.data.nickname);
       setRole(response.data.role);
+      console.log(response.data.accessToken)
+      setAccessToken(response.data.accessToken);
       // Update user context
       
       navigate("/")
