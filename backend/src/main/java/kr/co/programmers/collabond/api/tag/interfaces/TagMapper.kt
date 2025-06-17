@@ -5,16 +5,13 @@ import kr.co.programmers.collabond.api.tag.domain.TagType
 import kr.co.programmers.collabond.api.tag.domain.dto.Requests
 import kr.co.programmers.collabond.api.tag.domain.dto.Responses
 
-
 object TagMapper {
-    @JvmStatic
     fun toEntity(dto: Requests): Tag =
         Tag(
             name = dto.name,
             type = TagType.valueOf(dto.type)
         )
 
-    @JvmStatic
     fun toDto(tag: Tag): Responses =
         Responses(
             id = tag.id,
