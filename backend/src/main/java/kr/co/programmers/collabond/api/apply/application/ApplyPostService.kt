@@ -17,8 +17,8 @@ import kr.co.programmers.collabond.api.recruit.application.RecruitPostService
 import kr.co.programmers.collabond.api.user.application.UserService
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserInfo
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.ForbiddenException
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
+import kr.co.programmers.collabond.shared.exception.ForbiddenException
+import kr.co.programmers.collabond.shared.exception.InvalidException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -47,7 +47,7 @@ class ApplyPostService(
         val recruitPost = recruitPostService.findByRecruitmentId(recruitmentId)
         val profile = profileService.findByProfileId(request.profileId)
 
-        if (recruitPost.profile.type == profile.type) {
+        if (recruitPost.profile!!.type == profile.type) {
             throw InvalidException(ErrorCode.REQUEST_TO_SAME_ROLE)
         }
 
@@ -115,7 +115,7 @@ class ApplyPostService(
 
         val loginUser = userService.findByProviderId(userInfo.username)
 
-        if (receivedApply.recruitPost.profile.user.id != loginUser.id) {
+        if (receivedApply.recruitPost.profile!!.user.id != loginUser.id) {
             throw ForbiddenException(ErrorCode.FORBIDDEN_REQUEST)
         }
 
@@ -131,6 +131,6 @@ class ApplyPostService(
         applyPost: ApplyPost
     ) {
         applyPost.profile.updateCollaboCount()
-        applyPost.recruitPost.profile.updateCollaboCount()
+        applyPost.recruitPost.profile!!.updateCollaboCount()
     }
 }
