@@ -4,24 +4,22 @@ import jakarta.persistence.criteria.*
 import kr.co.programmers.collabond.api.file.application.FileService
 import kr.co.programmers.collabond.api.image.application.ImageService
 import kr.co.programmers.collabond.api.image.domain.Image
-import kr.co.programmers.collabond.api.image.infrastructure.toImage
+import kr.co.programmers.collabond.api.image.infrastructure.ImageMapper
 import kr.co.programmers.collabond.api.profile.domain.Profile
 import kr.co.programmers.collabond.api.profile.domain.ProfileType
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileRequestDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileResponseDto
 import kr.co.programmers.collabond.api.profile.infrastructure.ProfileRepository
-import kr.co.programmers.collabond.api.profile.interfaces.toDetailResponseDto
-import kr.co.programmers.collabond.api.profile.interfaces.toEntity
-import kr.co.programmers.collabond.api.profile.interfaces.toResponseDto
+import kr.co.programmers.collabond.api.profile.interfaces.ProfileMapper
 import kr.co.programmers.collabond.api.tag.application.TagService
 import kr.co.programmers.collabond.api.user.application.UserService
 import kr.co.programmers.collabond.core.auth.oauth2.OAuth2UserInfo
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.ForbiddenException
-import kr.co.programmers.collabond.shared.exception.custom.InternalException
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
+import kr.co.programmers.collabond.shared.exception.ForbiddenException
+import kr.co.programmers.collabond.shared.exception.InternalException
+import kr.co.programmers.collabond.shared.exception.InvalidException
+import kr.co.programmers.collabond.shared.exception.NotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -59,7 +57,7 @@ class ProfileService(
         }
 
         // Profile 엔티티 생성, db에 저장 후 ResponseDto 반환
-        val profile = toEntity(dto, user)
+        val profile = ProfileMapper.toEntity(dto, user)
 
         saveImage(profile, profileImage, "PROFILE", 1)
         saveImage(profile, thumbnailImage, "THUMBNAIL", 1)
@@ -80,7 +78,7 @@ class ProfileService(
             tagService.validateAndBindTags(savedProfile, tagIds)
         }
 
-        return toResponseDto(savedProfile, getProfileImgName(savedProfile))
+        return ProfileMapper.toResponseDto(savedProfile, getProfileImgName(savedProfile))
     }
 
     @Transactional
@@ -110,7 +108,7 @@ class ProfileService(
 
         val profileImg = getProfileImgName(profile)
 
-        return toResponseDto(profile, profileImg)
+        return ProfileMapper.toResponseDto(profile, profileImg)
     }
 
     @Transactional
@@ -122,33 +120,26 @@ class ProfileService(
                 )
             }
 
-        // 파일은 hard delete
         profile.images.clear()
-
-        // profile은 엔티티  @SQLDelete로 인해 soft delete 됨
         profileRepository.delete(profile)
     }
 
-    // ID로 프로필 조회 후 존재할 경우 ResponseDto로 변환하여 반환
     fun findById(id: Long): Optional<ProfileResponseDto> {
         return profileRepository.findById(id)
             .map { profile: Profile ->
-                toResponseDto(
+                ProfileMapper.toResponseDto(
                     profile,
                     getProfileImgName(profile)
                 )
             }
     }
 
-    // 특정 User의 모든 프로필 조회, 각 프로필을 ResponseDto로 매필해 반환
     fun findAllByUser(userId: Long): List<ProfileResponseDto> {
         return profileRepository.findAllByUserId(userId).stream()
-            .map { profile: Profile -> toResponseDto(profile, getProfileImgName(profile)) }
+            .map { profile: Profile -> ProfileMapper.toResponseDto(profile, getProfileImgName(profile)) }
             .toList()
     }
 
-
-    // 이미지 저장 메서드
     private fun saveImage(
         profile: Profile,
         imageFile: MultipartFile,
@@ -158,14 +149,13 @@ class ProfileService(
         try {
 
             val file = fileService.saveFile(imageFile)
-            val image = toImage(profile, file, type, priority)
+            val image = ImageMapper.toEntity(profile, file, type, priority)
             profile.addImage(image)
         } catch (e: RuntimeException) {
             throw InternalException(ErrorCode.SAVE_IMAGE_ERROR)
         }
     }
 
-    //타입별 이미지 삭제 (파일 하드삭제 ,이미지 삭제)
     private fun deleteImagesByType(profile: Profile, type: String) {
         imageService.findByProfileIdAndType(profile.id, type)
             .forEach(Consumer { i: Image? -> profile.images.remove(i) })
@@ -246,7 +236,7 @@ class ProfileService(
         val page = profileRepository.findAll(spec, pageable)
         val dtos = page
             .map { profile ->
-                toDetailResponseDto(profile)
+                ProfileMapper.toDetailResponseDto(profile)
             }
             .content
         return PageImpl(dtos, pageable, page.totalElements)
