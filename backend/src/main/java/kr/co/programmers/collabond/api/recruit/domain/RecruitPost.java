@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDto;
 
 import java.time.LocalDateTime;
 
