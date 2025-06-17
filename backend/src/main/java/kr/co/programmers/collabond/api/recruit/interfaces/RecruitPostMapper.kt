@@ -20,17 +20,17 @@ object RecruitPostMapper {
         writerProfileName = entity.profile?.name!!
     )
 
-    fun toResponseDto(entity: RecruitPost, fullPath: String): Responses =
+    fun toResponseDto(entity: RecruitPost): Responses =
         Responses(
-            id = entity.id!!,
+            id = entity.id,
             title = entity.title,
             description = entity.description,
             status = entity.status,
             deadline = entity.deadline,
             profileId = entity.profile?.id!!,
             profileName = entity.profile?.name!!,
-            profile = ProfileMapper.toSimpleDto(entity.profile!!, fullPath),
-            createdAt = entity.createdAt!!,
+            profile = ProfileMapper.toSimpleDto(entity.profile!!)!!,
+            createdAt = entity.createdAt,
             deletedAt = entity.deletedAt
         )
 

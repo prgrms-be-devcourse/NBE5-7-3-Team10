@@ -39,7 +39,7 @@ class RecruitPostService(
         val post = RecruitPostMapper.toEntity(request, profile)
         val savedPost = recruitPostRepository.save(post)
 
-        return RecruitPostMapper.toResponseDto(savedPost, savedPost.getProfileImgName())
+        return RecruitPostMapper.toResponseDto(savedPost);
     }
 
     @Transactional
@@ -63,7 +63,7 @@ class RecruitPostService(
             deadline = request.deadline
         )
 
-        return RecruitPostMapper.toResponseDto(post, post.getProfileImgName())
+        return RecruitPostMapper.toResponseDto(post)
     }
 
     @Transactional
@@ -86,7 +86,7 @@ class RecruitPostService(
             ?: recruitPostRepository.findAll(pageable)
 
         return posts.map { recruitPost ->
-            RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
+            RecruitPostMapper.toResponseDto(recruitPost)
         }
     }
 
@@ -94,14 +94,14 @@ class RecruitPostService(
     fun getRecruitPostsByUser(userId: Long, pageable: Pageable): Page<Responses> =
         recruitPostRepository.findByUserId(userId, pageable)
             .map { recruitPost ->
-                RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
+                RecruitPostMapper.toResponseDto(recruitPost)
             }
 
     @Transactional(readOnly = true)
     fun getRecruitPostByProfile(profileId: Long, pageable: Pageable): Page<Responses> =
         recruitPostRepository.findByProfileId(profileId, pageable)
             .map { recruitPost ->
-                RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
+                RecruitPostMapper.toResponseDto(recruitPost)
             }
 
     @Transactional(readOnly = true)
@@ -110,7 +110,7 @@ class RecruitPostService(
     @Transactional(readOnly = true)
     fun getRecruitPostById(recruitmentId: Long): Responses {
         val recruitPost = findRecruitPostById(recruitmentId)
-        return RecruitPostMapper.toResponseDto(recruitPost, recruitPost.getProfileImgName())
+        return RecruitPostMapper.toResponseDto(recruitPost)
     }
 
     private fun findRecruitPostById(recruitmentId: Long): RecruitPost =
