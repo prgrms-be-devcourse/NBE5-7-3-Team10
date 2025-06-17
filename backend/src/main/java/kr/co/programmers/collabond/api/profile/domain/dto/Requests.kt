@@ -6,8 +6,8 @@ data class ProfileRequestDto(
     val type: String,
     val name: String,
     val description: String,
-    val address: String,
-    val addressCode: String,
+    val address: String?,
+    val addressCode: String?,
     val status: Boolean,
     val tagIds: List<Long>
 )

@@ -28,10 +28,10 @@ class Profile(
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
 
-    @Column(name = "address_code", nullable = false)
+    @Column
     var addressCode: String,
 
-    @Column(nullable = false)
+    @Column
     var address: String,
 
     @Enumerated(EnumType.STRING)
