@@ -1,16 +1,10 @@
 package kr.co.programmers.collabond.shared.util
 
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 data class ApiErrorResponse<T>(
-    @field:NotBlank(message = "메시지는 비어있을 수 없습니다")
     val message: String,
-
-    @field:Positive(message = "상태 코드는 양수여야 합니다")
     val status: Int
 ) {
     companion object {
@@ -22,13 +16,8 @@ data class ApiErrorResponse<T>(
 }
 
 data class ApiSuccessResponse<T>(
-    @field:NotBlank(message = "메시지는 비어있을 수 없습니다")
     val message: String,
-
-    @field:Positive(message = "상태 코드는 양수여야 합니다")
     val status: Int,
-
-    @field:NotNull(message = "데이터는 null일 수 없습니다")
     val data: T
 ) {
     companion object {
