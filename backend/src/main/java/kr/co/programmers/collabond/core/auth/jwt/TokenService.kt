@@ -8,10 +8,12 @@ import kr.co.programmers.collabond.api.user.domain.Role
 import kr.co.programmers.collabond.api.user.domain.TokenStatus
 import kr.co.programmers.collabond.api.user.infrastructure.RefreshTokenRepository
 import kr.co.programmers.collabond.api.user.infrastructure.UserRepository
+import kr.co.programmers.collabond.core.auth.jwt.TokenMapper.toLoginTokenResponseDto
+import kr.co.programmers.collabond.core.auth.jwt.TokenMapper.toTokenBodyDto
 import kr.co.programmers.collabond.shared.exception.ErrorCode
-import kr.co.programmers.collabond.shared.exception.custom.ExpiredException
-import kr.co.programmers.collabond.shared.exception.custom.InvalidException
-import kr.co.programmers.collabond.shared.exception.custom.NotFoundException
+import kr.co.programmers.collabond.shared.exception.ExpiredException
+import kr.co.programmers.collabond.shared.exception.InvalidException
+import kr.co.programmers.collabond.shared.exception.NotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

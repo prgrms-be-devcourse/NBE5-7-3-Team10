@@ -1,7 +1,6 @@
 package kr.co.programmers.collabond.api.user.domain
 
 import jakarta.persistence.*
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import kr.co.programmers.collabond.shared.domain.OnlyUpdatedEntity

@@ -3,7 +3,7 @@ package kr.co.programmers.collabond.core.auth.jwt
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kr.co.programmers.collabond.core.auth.oauth2.toOAuth2UserInfo
+import kr.co.programmers.collabond.core.auth.oauth2.OAuth2Mapper.toOAuth2UserInfo
 import kr.co.programmers.collabond.shared.exception.ErrorCode
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
