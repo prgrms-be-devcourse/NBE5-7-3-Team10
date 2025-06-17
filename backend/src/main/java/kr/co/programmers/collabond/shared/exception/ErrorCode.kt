@@ -1,13 +1,11 @@
-package kr.co.programmers.collabond.shared.exception;
+package kr.co.programmers.collabond.shared.exception
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@AllArgsConstructor
-public enum ErrorCode {
-
+enum class ErrorCode(
+    val status: Int,
+    val message: String
+) {
     INVALID_REQUEST(400, "요청이 올바르지 않습니다"),
     INVALID_TOKEN(400, "유효하지 않은 토큰입니다"),
     INVALID_PROVIDER(400, "유효하지 않은 OAuth2.0 제공자입니다"),
@@ -26,7 +24,6 @@ public enum ErrorCode {
     EXPIRED_TOKEN(401, "만료된 토큰입니다"),
 
     FORBIDDEN_REQUEST(403, "요청을 수행할 권한이 없습니다"),
-    INVALID_SIGNATURE(403, "유효하지 않은 시그니처입니다"),
 
     NOT_FOUND(404, "요청에 대한 데이터를 찾을 수 없습니다"),
     RECRUIT_NOT_FOUND(404, "모집 공고글을 찾을 수 없습니다"),
@@ -39,16 +36,9 @@ public enum ErrorCode {
 
     EXPIRED_REFRESH_TOKEN(410, "만료된 리프레시 토큰입니다"),
 
-
     INTERNAL_SERVER_ERROR(500, "내부 서버 오류"),
-    SAVE_IMAGE_ERROR(500, "이미지 저장 실패"),
-    ;
-
-    public final int status;
-    public final String message;
+    SAVE_IMAGE_ERROR(500, "이미지 저장 실패");
 
     // status값으로 HttpStatus를 반환하는 메서드
-    public HttpStatus getStatus() {
-        return HttpStatus.valueOf(status);
-    }
+    fun getHttpStatus(): HttpStatus = HttpStatus.valueOf(status)
 }
