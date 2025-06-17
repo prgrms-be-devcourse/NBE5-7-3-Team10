@@ -4,7 +4,7 @@ import jakarta.persistence.criteria.*
 import kr.co.programmers.collabond.api.file.application.FileService
 import kr.co.programmers.collabond.api.image.application.ImageService
 import kr.co.programmers.collabond.api.image.domain.Image
-import kr.co.programmers.collabond.api.image.infrastructure.ImageMapper
+import kr.co.programmers.collabond.api.image.infrastructure.toImage
 import kr.co.programmers.collabond.api.profile.domain.Profile
 import kr.co.programmers.collabond.api.profile.domain.ProfileType
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseDto
@@ -158,7 +158,7 @@ class ProfileService(
         try {
 
             val file = fileService.saveFile(imageFile)
-            val image = ImageMapper.toEntity(file, type, priority)
+            val image = toImage(profile, file, type, priority)
             profile.addImage(image)
         } catch (e: RuntimeException) {
             throw InternalException(ErrorCode.SAVE_IMAGE_ERROR)

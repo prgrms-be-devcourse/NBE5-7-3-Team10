@@ -1,6 +1,5 @@
 package kr.co.programmers.collabond.api.profile.interfaces
 
-import kr.co.programmers.collabond.api.image.domain.Image
 import kr.co.programmers.collabond.api.profile.domain.Profile
 import kr.co.programmers.collabond.api.profile.domain.ProfileType
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDetailResponseDto
@@ -8,8 +7,7 @@ import kr.co.programmers.collabond.api.profile.domain.dto.ProfileDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileRequestDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileResponseDto
 import kr.co.programmers.collabond.api.profile.domain.dto.ProfileSimpleResponseDto
-import kr.co.programmers.collabond.api.profiletag.domain.ProfileTag
-import kr.co.programmers.collabond.api.tag.interfaces.TagMapper
+import kr.co.programmers.collabond.api.tag.interfaces.toTagResponse
 import kr.co.programmers.collabond.api.user.domain.User
 
 fun toEntity(dto: ProfileRequestDto, user: User) = Profile(
@@ -59,7 +57,7 @@ fun toResponseDto(entity: Profile, imageUrl: String?) = ProfileResponseDto(
     collaboCount = entity.collaboCount,
     status = entity.status,
     tags = entity.tags
-        .map { TagMapper.toDto(it.tag) },
+        .map { toTagResponse(it.tag!!) },
     createdAt = entity.createdAt,
     updatedAt = entity.updatedAt
 )
@@ -99,7 +97,7 @@ fun toDetailResponseDto(profile: Profile) = ProfileDetailResponseDto(
     addressCode = profile.addressCode,
     collaboCount = profile.collaboCount,
     status = profile.status,
-    tags = profile.tags.map { TagMapper.toDto(it.tag) },
+    tags = profile.tags.map { toTagResponse(it.tag!!) },
     createdAt = profile.createdAt,
     updatedAt = profile.updatedAt
 )

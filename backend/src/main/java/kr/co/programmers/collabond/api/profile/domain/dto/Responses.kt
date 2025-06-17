@@ -1,6 +1,6 @@
 package kr.co.programmers.collabond.api.profile.domain.dto
 
-import kr.co.programmers.collabond.api.tag.domain.dto.TagResponseDto
+import kr.co.programmers.collabond.api.tag.domain.dto.Responses
 import java.time.LocalDateTime
 
 data class ProfileDetailResponseDto(
@@ -17,7 +17,7 @@ data class ProfileDetailResponseDto(
     val addressCode: String,
     val collaboCount: Int,
     val status: Boolean,
-    val tags: List<TagResponseDto>,
+    val tags: List<Responses>,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
@@ -43,7 +43,7 @@ data class ProfileResponseDto(
     val addressCode: String,
     val collaboCount: Int,
     val status: Boolean,
-    val tags: List<TagResponseDto>,
+    val tags: List<Responses>,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val profileImageUrl: String?,
