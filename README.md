@@ -1,5 +1,5 @@
-# NBE5-7-2-Team10
-프로그래머스 백엔드 데브코스 5기 7회차 열일하는팀 10팀 2차 프로젝트입니다.
+# NBE5-7-3-Team10
+프로그래머스 백엔드 데브코스 5기 7회차 열일하는팀 10팀 3차 프로젝트입니다.
 ## 🧑‍💼 기여자
 
 | 이름 | 역할 |
@@ -17,6 +17,9 @@
 ---
 
 ## 📌 프로젝트 소개
+본 프로젝트는 2차 프로젝트에서 개발한 Java 기반의 REST API 시스템을 Kotlin으로 전환하여 Kotlin의 코드 간결성, 생산성, 유지보수성 향상 효과를 확인하고자 한다. 
+전환 대상 시스템은 지역 점주와 IP 제공자의 매칭 플랫폼 'Collabond'로, 이번 전환을 통해 전체 서비스 구조는 유지하되 주요 로직을 Kotlin으로 재작성하고 추가 기능을 반영할 예정이다.
+
 
 **Collabond**는 점주(매장 운영자)와 IP 제공자(캐릭터/콘텐츠 보유자)가 모집글을 통해 서로를 탐색하고,  
 프로필을 기반으로 협업을 제안/지원할 수 있는 리크루팅 기반 플랫폼입니다.
@@ -65,8 +68,8 @@
 ---
 
 ## 🛠️ 시스템 구성도 / 기술 스택
-<img src="https://github.com/user-attachments/assets/e85ef17d-c4bf-4a58-ae60-99e3b40bd81f" alt="logo2" height="400"/>
-<img src="https://github.com/user-attachments/assets/c05af4c9-009f-443e-ad01-60b7fbf6c5ee" alt="logo1" height="400"/>
+<img src="https://github.com/user-attachments/assets/0641db33-37d6-4d11-a42f-5f0ebebff618" alt="logo2" height="400"/>
+<img src="https://github.com/user-attachments/assets/82531f5f-99b7-49d4-acd8-b60770b57c89" alt="logo1" height="400"/>
 
 
 ## 🛠️ ERD
