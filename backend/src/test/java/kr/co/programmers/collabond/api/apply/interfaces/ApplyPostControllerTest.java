@@ -10,6 +10,7 @@ import kr.co.programmers.collabond.core.auth.jwt.TokenAuthenticationFilter;
 import kr.co.programmers.collabond.core.config.SecurityConfig;
 import kr.co.programmers.collabond.shared.exception.ErrorCode;
 import kr.co.programmers.collabond.shared.exception.InvalidException;
+import kr.co.programmers.collabond.util.WithCustomMockUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ class ApplyPostControllerTest {
 
     @Test
     @DisplayName("지원서 제출 테스트")
-    @WithMockUser
+    @WithCustomMockUser
     void applyPost_success() throws Exception {
         // given
         Long recruitmentId = 1L;
@@ -110,7 +111,7 @@ class ApplyPostControllerTest {
 
     @Test
     @DisplayName("지원서 제출 실패 테스트")
-    @WithMockUser
+    @WithCustomMockUser
     void applyPost_fail() throws Exception {
         // given
         Long recruitmentId = 1L;
@@ -157,7 +158,7 @@ class ApplyPostControllerTest {
 
     @Test
     @DisplayName("보낸 지원서 목록 조회 테스트")
-    @WithMockUser
+    @WithCustomMockUser
     void sentApplyPosts() throws Exception {
         // given
         List<ApplyPostDto> applyPosts = new ArrayList<>();
@@ -198,7 +199,7 @@ class ApplyPostControllerTest {
 
     @Test
     @DisplayName("받은 지원서 목록 조회 테스트")
-    @WithMockUser
+    @WithCustomMockUser
     void receivedApplyPosts() throws Exception {
         // given
         List<ApplyPostDto> applyPosts = new ArrayList<>();
@@ -221,8 +222,7 @@ class ApplyPostControllerTest {
                         any(),
                         any(Pageable.class)
                 )
-        )
-                .thenReturn(page);
+        ).thenReturn(page);
 
         // when & then
         mockMvc.perform(get("/api/applications/received")
@@ -240,7 +240,7 @@ class ApplyPostControllerTest {
 
     @Test
     @DisplayName("지원서 수락 테스트")
-    @WithMockUser
+    @WithCustomMockUser
     void acceptApply() throws Exception {
         // given
         Long applicationId = 1L;

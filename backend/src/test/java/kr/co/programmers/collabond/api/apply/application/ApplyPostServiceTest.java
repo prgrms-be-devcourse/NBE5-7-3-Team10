@@ -70,6 +70,13 @@ class ApplyPostServiceTest {
         Long recruitmentId = 1L;
         Long profileId = 2L;
         Long userId = 3L;
+        String recruitProfileName = "recruitProfileName";
+        String recruitTitle = "recruitTitle";
+        String recruitDescription = "recruitDescription";
+        LocalDateTime deadline = LocalDateTime.now();
+        String profileName = "profileName";
+        String profileDescription = "profileDescription";
+
 
         ApplyPostRequestDto request = new ApplyPostRequestDto(profileId, "내용");
         RecruitPost recruitPost = mock(RecruitPost.class);
@@ -80,8 +87,14 @@ class ApplyPostServiceTest {
 
         // Setup profile types
         when(recruitPost.getProfile()).thenReturn(recruitProfile);
+        when(recruitPost.getTitle()).thenReturn(recruitTitle);
+        when(recruitPost.getDescription()).thenReturn(recruitDescription);
+        when(recruitPost.getDeadline()).thenReturn(deadline);
         when(recruitPost.getStatus()).thenReturn(RecruitPostStatus.RECRUITING);
         when(recruitProfile.getType()).thenReturn(ProfileType.STORE);
+        when(recruitProfile.getName()).thenReturn(recruitProfileName);
+        when(profile.getName()).thenReturn(profileName);
+        when(profile.getDescription()).thenReturn(profileDescription);
         when(profile.getType()).thenReturn(ProfileType.IP);
         when(profile.getUser()).thenReturn(user);
         when(user.getId()).thenReturn(userId);
@@ -118,6 +131,12 @@ class ApplyPostServiceTest {
         Long recruitmentId = 1L;
         Long profileId = 2L;
         Long userId = 3L;
+        String recruitProfileName = "recruitProfileName";
+        String recruitTitle = "recruitTitle";
+        String recruitDescription = "recruitDescription";
+        LocalDateTime deadline = LocalDateTime.now();
+        String profileName = "profileName";
+        String profileDescription = "profileDescription";
 
         ApplyPostRequestDto request = new ApplyPostRequestDto(profileId, "내용");
         RecruitPost recruitPost = mock(RecruitPost.class);
@@ -138,8 +157,14 @@ class ApplyPostServiceTest {
 
         // Setup profile types
         when(recruitPost.getProfile()).thenReturn(recruitProfile);
+        when(recruitPost.getTitle()).thenReturn(recruitTitle);
+        when(recruitPost.getDescription()).thenReturn(recruitDescription);
+        when(recruitPost.getDeadline()).thenReturn(deadline);
         when(recruitPost.getStatus()).thenReturn(RecruitPostStatus.RECRUITING);
         when(recruitProfile.getType()).thenReturn(ProfileType.STORE);
+        when(recruitProfile.getName()).thenReturn(recruitProfileName);
+        when(profile.getName()).thenReturn(profileName);
+        when(profile.getDescription()).thenReturn(profileDescription);
         when(profile.getType()).thenReturn(ProfileType.IP);
         when(profile.getUser()).thenReturn(user);
         when(user.getId()).thenReturn(userId);
