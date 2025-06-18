@@ -69,13 +69,13 @@ class RecruitPostControllerTest {
         val attributes = mapOf(
             "email" to "test@example.com",
             "providerId" to "1234567890",
-            "provider" to "google"          // 필요 시 참고용으로 남겨둡니다
+            "provider" to "google"
         )
 
         return OAuth2UserInfo(
-            username   = "1234567890",      // providerId와 동일한 값
+            username   = "1234567890",
             email      = "test@example.com",
-            _name      = "testuser",        // display name
+            _name      = "testuser",
             role       = Role.ROLE_STORE,
             attributes = attributes
         )
