@@ -71,7 +71,7 @@ object ProfileMapper{
                     .savedName,
                 type = entity.type.name,
                 address = entity.address,
-                status = TODO()
+                status = entity.status
             )
         }
 
