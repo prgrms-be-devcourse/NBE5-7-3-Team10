@@ -56,6 +56,6 @@ data class ProfileSimpleResponseDto(
     val profileId: Long,
     val type: String,
     val imageUrl: String,
-    val address: String,
+    val address: String?,
     val status: Boolean
 )
